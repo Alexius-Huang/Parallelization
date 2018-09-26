@@ -1,0 +1,11 @@
+@mixin vertical-align
+  &:before
+    content: ''
+    height: 100%
+    width: 0
+    display: inline-block
+    vertical-align: middle
+
+  > *
+    display: inline-block
+    vertical-align: middle
