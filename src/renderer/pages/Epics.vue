@@ -71,6 +71,13 @@
         <div v-else class="no-tickets">
           <p>Currently there are no tickets in this epic.</p>
         </div>
+
+        <div class="btn-wrapper">
+          <button
+            class="new-ticket-btn"
+            @click="modal.createNewTicket = true"
+          >Create New Ticket</button>
+        </div>
       </div>
     </section>
 
@@ -101,25 +108,79 @@
         </div>
       </div>
     </modal>
+
+    <modal :class="{ closed: !modal.createNewTicket }" width="60vw">
+      <div class="form-wrapper new-ticket-form">
+        <h1>Create New Ticket</h1>
+        <label>
+          <p>Title</p>
+          <input
+            v-model="inputs.createNewTicket.title"
+            type="text"
+            placeholder="Title of the ticket"
+          />
+        </label>
+
+        <label>
+          <p>Description</p>
+          <input
+            v-model="inputs.createNewTicket.description"
+            type="text"
+            placeholder="Description of the ticket"
+          />
+        </label>
+
+        <label class="point-field">
+          <p>Points</p>
+          <input
+            v-model="inputs.createNewTicket.point"
+            type="text"
+          />
+        </label>
+
+        <label class="assign-epic-field">
+          <p>Epic</p>
+          <select-input
+            :options="epicOptions"
+            default="Unassigned"
+            :default-value="-1"
+            @input="handleChangeEpicOption"
+          />
+        </label>
+
+        <div class="btn-wrapper">
+          <button @click="modal.createNewTicket = false">Cancel</button>
+          <button @click="createNewTicket()">Submit</button>
+        </div>
+      </div>
+    </modal>
   </main>
 </template>
 
 <script>
 import Modal from '@/components/Modal';
+import SelectInput from '@/components/SelectInput';
 import add from '@/assets/add.svg';
 
 export default {
-  components: { Modal },
+  components: { Modal, SelectInput },
   data() {
     return {
       icons: { add },
       modal: {
         createNewEpic: false,
+        createNewTicket: false,
       },
       inputs: {
         createNewEpic: {
           title: '',
           description: '',
+        },
+        createNewTicket: {
+          title: '',
+          description: '',
+          point: '',
+          epicId: '',
         },
       },
     };
@@ -127,6 +188,7 @@ export default {
   computed: {
     epicsMap() { return this.$store.getters['epics/data']; },
     epics() { return Array.from(this.epicsMap.values()); },
+    epicOptions() { return this.epics.map(({ title, id }) => ({ title, value: id })); },
     focusedEpicId() { return this.$store.getters['epics/focused']; },
     focusedEpic() {
       return this.epicsMap.get(this.focusedEpicId) || {
@@ -159,6 +221,10 @@ export default {
     },
     async focusEpic(id) {
       this.$store.commit('epics/setFocused', id);
+    },
+    handleChangeEpicOption(value) {
+      console.log(value);
+      this.inputs.createNewTicket.epicId = value;
     },
   },
 };
@@ -313,4 +379,26 @@ main
         > p
           font-size: 10pt
           color: rgba(255, 255, 255, 0.27)
+
+      > div.btn-wrapper
+        text-align: right
+        margin-top: 15pt
+        > button
+          height: 30pt
+          line-height: 30pt
+          font-size: 10pt
+          padding: 0 10pt
+          color: rgba(255, 255, 255, 0.54)
+          background-color: #555
+          &:hover
+            background-color: #666
+
+div.modal-content
+  > div.form-wrapper
+    &.new-ticket-form
+      > label.point-field
+        width: 20%
+      > label.assign-epic-field
+        margin-left: 10pt
+        width: calc(80% - 10pt)
 </style>
