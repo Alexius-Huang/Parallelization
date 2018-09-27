@@ -16,29 +16,30 @@ export default {
   },
   methods: {
     async startApp() {
-      // const { dispatch } = this.$store;
+      const { dispatch } = this.$store;
+      await Promise.all([
+        dispatch('epics/fetch'),
+        dispatch('boards/fetch'),
+        dispatch('epics/tickets/fetchAll'),
+      ]);
     },
     async mapRouteToDispatch(to = {}) { // , from = {}) {
       const { it } = this;
-      const { dispatch, commit, getters } = this.$store;
+      const { commit } = this.$store;
       // const { query, params } = getters['router/route'];
 
       if (it.isIndexPage) {
         /* Empty */
       } else if (it.isEpicsPage) {
-        await dispatch('epics/fetch');
-        const epics = getters['epics/data'];
-        const focusedId = Array.from(epics.values())[0].id;
-
-        if (focusedId) {
-          commit('epics/setFocused', focusedId);
-          await dispatch('epics/tickets/fetch', { id: focusedId });
-        }
+        // await dispatch('epics/fetch');
+        // await dispatch('epics/tickets/fetchAll');
+        commit('epics/setFocused', NaN);
       } else if (it.isScrumBoardsPage) {
-        await Promise.all([
-          dispatch('epics/fetch'),
-          dispatch('boards/fetch'),
-        ]);
+        // await Promise.all([
+        //   dispatch('epics/fetch'),
+        //   dispatch('boards/fetch'),
+        //   dispatch('epics/tickets/fetchAll'),
+        // ]);
       } else {
         /* eslint-disable no-console */
         console.warn(`[Page Not Specified] ${to.name} isn't specified`);
@@ -96,8 +97,11 @@ button
   border-radius: 0
   cursor: pointer
   transition: .25s
+  padding: 0
   &:hover
     transition: .25s
+  &:disabled
+    cursor: default
   &:focus
     outline: none
 </style>

@@ -1,7 +1,23 @@
 <template>
   <main>
     <h1>Scrum Boards</h1>
-  
+
+    <section class="scrum-boards-list">
+      <ul>
+        <li
+          v-for="{ title, id } in boards"
+          :key="`${title}-${id}`"
+          :class="{ active: id === focusBoardId }"
+        >
+          <button>{{ title }}</button>
+        </li>
+
+        <li>
+          <button><img :src="icons.add" alt="Create Scrum Board" /></button>
+        </li>
+      </ul>
+    </section>
+
     <section class="scrum-boards">
       <ul>
         <li
@@ -12,14 +28,34 @@
 
           <ul v-if="boardTicketsMap.get(i).length" class="column-list">
             <li
-              v-for="({ title, description, epicId }) in boardTicketsMap.get(i)"
+              v-for="({ title, description, epicId, id: ticketId, point }) in boardTicketsMap.get(i)"
               :key="title"
             >
+              <span class="point">{{ point }}</span>
               <h3>{{ title }}</h3>
               <p class="tag" :style="{ 'background-color': epicsMap.get(epicId).color }">
                 {{ epicsMap.get(epicId).title }}
               </p>
               <p class="description">{{ description }}</p>
+
+              <div class="btn-group">
+                <button
+                  @click="firstState(ticketId)"
+                  :disabled="i === 0"
+                ><img :src="icons.firstPage" alt="First State" /></button>
+                <button
+                  @click="previousState(ticketId)"
+                  :disabled="i === 0"
+                ><img :src="icons.chevronLeft" alt="Previous State" /></button>
+                <button
+                  @click="nextState(ticketId)"
+                  :disabled="i === board.columns.length - 1"
+                ><img :src="icons.chevronRight" alt="Next State" /></button>
+                <button
+                  @click="lastState(ticketId)"
+                  :disabled="i === board.columns.length - 1"
+                ><img :src="icons.lastPage" alt="Last State" /></button>
+              </div>
             </li>
           </ul>
           <p v-else class="no-tickets">Currently there are no ticket in this state...</p>
@@ -30,23 +66,67 @@
 </template>
 
 <script>
+import chevronLeft from '@/assets/chevron-left.svg';
+import chevronRight from '@/assets/chevron-right.svg';
+import firstPage from '@/assets/first-page.svg';
+import lastPage from '@/assets/last-page.svg';
+import add from '@/assets/add.svg';
+
 export default {
+  data() {
+    return {
+      icons: {
+        chevronLeft,
+        chevronRight,
+        firstPage,
+        lastPage,
+        add,
+      },
+      focusBoardId: 1,
+    };
+  },
   computed: {
     epicsMap() { return this.$store.getters['epics/data']; },
+    ticketsMap() { return this.$store.getters['epics/tickets/data']; },
+    tickets() { return Array.from(this.ticketsMap.values()); },
     boardsMap() { return this.$store.getters['boards/data']; },
     boards() { return Array.from(this.boardsMap.values()); },
-    board() { return this.boards[0]; },
+    board() { return this.boardsMap.get(this.focusBoardId) || { columns: [] }; },
+    boardTickets() { return this.tickets.filter(({ boardId }) => boardId === this.board.id); },
     boardTicketsMap() {
       const ticketsMap = new Map();
       this.board.columns.forEach((_, i) => ticketsMap.set(i, []));
-      this.board.tickets.forEach(ticket => ticketsMap.get(ticket.boardState).push(ticket));
+      this.boardTickets.forEach(ticket => ticketsMap.get(ticket.boardState).push(ticket));
       return ticketsMap;
+    },
+  },
+  methods: {
+    nextState(ticketId) {
+      this.$store.dispatch('epics/tickets/nextState', { id: ticketId });
+    },
+    previousState(ticketId) {
+      this.$store.dispatch('epics/tickets/previousState', { id: ticketId });
+    },
+    firstState(ticketId) {
+      this.$store.dispatch('epics/tickets/update', {
+        id: ticketId,
+        mutation: ticket => ({ ...ticket, boardState: 0 }),
+      });
+    },
+    lastState(ticketId) {
+      const boardState = this.board.columns.length - 1;
+      this.$store.dispatch('epics/tickets/update', {
+        id: ticketId,
+        mutation: ticket => ({ ...ticket, boardState }),
+      });
     },
   },
 };
 </script>
 
 <style scoped lang="sass">
+@import '../sass/_shared.sass'
+
 main
   > h1
     width: 960px
@@ -57,7 +137,38 @@ main
     line-height: 60pt
     font-weight: 100
 
+  > section.scrum-boards-list
+    width: 960px
+    margin: 0 auto
+    > ul
+      width: 100%
+      > li
+        display: inline-block
+        vertical-align: top
+        font-size: 0
+        height: 30pt
+        + li
+          margin-left: 10pt
+        &.active
+          > button
+            background-color: #555
+        > button
+          padding: 0 10pt
+          border-radius: 15pt
+          font-family: 'Roboto Mono', sans-serif
+          font-weight: 100
+          height: 30pt
+          line-height: 30pt
+          font-size: 12pt
+          display: inline-block
+          color: rgba(255, 255, 255, 0.54)
+          background-color: #444
+          @include vertical-align
+          &:hover
+            background-color: #555
+
   > section.scrum-boards
+    margin-top: 20pt
     width: 100vw
     height: auto
     > ul
@@ -66,7 +177,8 @@ main
       overflow-x: auto
       white-space: nowrap
       text-align: center
-      padding: 0 50pt
+      padding: 20pt 50pt
+      box-shadow: inset 0pt 15pt 8pt -10pt #222
       > li
         width: 200pt
         display: inline-block
@@ -93,6 +205,28 @@ main
             padding: 5pt
             border-radius: 5pt
             white-space: normal
+            position: relative
+            + li
+              margin-top: 5pt
+            &:hover
+              > p.description
+                display: block
+              > div.btn-group
+                display: block
+
+            > span.point
+              display: inline-block
+              position: absolute
+              border-top-right-radius: 5pt
+              border-bottom-left-radius: 5pt
+              right: 0
+              top: 0
+              background-color: #333
+              font-size: 10pt
+              height: 15pt
+              line-height: 15pt
+              padding: 0 5pt
+
             > h3
               font-size: 10pt
               letter-spacing: 0.8px
@@ -107,14 +241,29 @@ main
             > p.description
               letter-spacing: .8px
               display: none
-              margin-top: 6px
+              margin-top: 10px
               font-size: 9pt
               line-height: 14pt
-            + li
-              margin-top: 5pt
-            &:hover
-              > p.description
-                display: block
+            > div.btn-group
+              height: 20pt
+              width: 100%
+              font-size: 0
+              margin-top: 10px
+              display: none
+              > button
+                background-color: rgba(255, 255, 255, 0.1)
+                display: inline-block
+                width: 25%
+                height: 20pt
+                line-height: 20pt
+                text-align: center
+                &:hover
+                  background-color: rgba(255, 255, 255, 0.2)
+                &:disabled
+                  background-color: rgba(255, 255, 255, 0.05)
+                  > img
+                    opacity: 0.54
+
         > p.no-tickets
           background-color: #222
           color: #777

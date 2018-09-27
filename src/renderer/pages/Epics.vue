@@ -33,7 +33,7 @@
 
         <ul v-if="tickets.length" class="ticket-list">
           <li
-            v-for="{ id, epicId, title, point } in tickets"
+            v-for="{ id, epicId, title, point, board, boardState } in filteredTickets"
             :key="id"
           >
             <p>
@@ -43,6 +43,15 @@
                 :style="{ 'background-color': epicsMap.get(epicId).color }"
               >
                 {{ epicsMap.get(epicId).title }}
+              </span>
+              <span v-if="board" class="tag">
+                {{ board.title }}
+              </span>
+              <span v-if="board" class="tag">
+                {{ board.columns[boardState] }}
+              </span>
+              <span class="tag unassigned" v-else>
+                Unassigned
               </span>
               <span class="point">{{ point }}</span>
             </p>
@@ -117,6 +126,12 @@ export default {
     },
     ticketsMap() { return this.$store.getters['epics/tickets/data']; },
     tickets() { return Array.from(this.ticketsMap.values()); },
+    filteredTickets() {
+      if (!Number.isNaN(this.focusedEpicId)) {
+        return this.tickets.filter(({ epicId }) => epicId === this.focusedEpicId);
+      }
+      return this.tickets;
+    },
   },
   methods: {
     async createNewEpic() {
@@ -133,13 +148,6 @@ export default {
     },
     async focusEpic(id) {
       this.$store.commit('epics/setFocused', id);
-
-      /* eslint-disable no-restricted-globals */
-      if (isNaN(id)) {
-        await this.$store.dispatch('epics/tickets/fetchAll');
-      } else {
-        await this.$store.dispatch('epics/tickets/fetch', { id });
-      }
     },
   },
 };
@@ -267,6 +275,9 @@ main
               height: 16pt
               line-height: 16pt
               padding: 0 5pt
+              &.unassigned
+                background-color: #333
+                color: #777
             > span.point
               position: absolute
               right: 0
