@@ -16,10 +16,10 @@ export function createEpic(data) {
 
 export function fetchTickets(epicId = null) {
   if (epicId === null) {
-    return fetch(`${URL}/tickets?_expand=board`)
+    return fetch(`${URL}/tickets`)
       .then(response => response.json());
   }
-  return fetch(`${URL}/tickets?epicId=${epicId}&_expand=board`)
+  return fetch(`${URL}/tickets?epicId=${epicId}`)
     .then(response => response.json());
 }
 

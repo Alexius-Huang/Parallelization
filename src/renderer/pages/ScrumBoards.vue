@@ -33,7 +33,13 @@
             >
               <span class="point">{{ point }}</span>
               <h3>{{ title }}</h3>
-              <p class="tag" :style="{ 'background-color': epicsMap.get(epicId).color }">
+              <p
+                class="tag"
+                :style="{
+                  'background-color': epicsMap.get(epicId).color[0],
+                  'color': epicsMap.get(epicId).color[1],
+                }"
+              >
                 {{ epicsMap.get(epicId).title }}
               </p>
               <p class="description">{{ description }}</p>

@@ -11,7 +11,7 @@
           v-for="{ id, title, color } in epics"
           :key="id"
           :class="{ active: id === focusedEpicId }"
-          :style="{ 'border-left-color': color }"
+          :style="{ 'border-left-color': color[0] }"
         >
           <button
             @click="focusEpic(id)"
@@ -33,22 +33,32 @@
 
         <ul v-if="tickets.length" class="ticket-list">
           <li
-            v-for="{ id, epicId, title, point, board, boardState } in filteredTickets"
+            v-for="{ id, epicId, title, point, boardId, boardState } in filteredTickets"
             :key="id"
           >
             <p>
               {{ title }}
               <span
                 class="tag"
-                :style="{ 'background-color': epicsMap.get(epicId).color }"
+                :style="{
+                  'background-color': epicsMap.get(epicId).color[0],
+                  'color': epicsMap.get(epicId).color[1],
+                }"
               >
                 {{ epicsMap.get(epicId).title }}
               </span>
-              <span v-if="board" class="tag">
-                {{ board.title }}
-              </span>
-              <span v-if="board" class="tag">
-                {{ board.columns[boardState] }}
+              <span
+                v-if="boardId !== -1"
+                class="tag"
+                :style="{
+                  'background-color': boardsMap.get(boardId).color[0],
+                  'color': boardsMap.get(boardId).color[1],
+                }"
+              >
+                {{ boardsMap.get(boardId).title }}
+                <span class="inner-tag">
+                  {{ boardsMap.get(boardId).columns[boardState] }}
+                </span>
               </span>
               <span class="tag unassigned" v-else>
                 Unassigned
@@ -124,6 +134,7 @@ export default {
         description: 'Browsing all the tickets in different epics',
       };
     },
+    boardsMap() { return this.$store.getters['boards/data']; },
     ticketsMap() { return this.$store.getters['epics/tickets/data']; },
     tickets() { return Array.from(this.ticketsMap.values()); },
     filteredTickets() {
@@ -270,11 +281,20 @@ main
               display: inline-block
               font-family: 'Ubuntu', sans-serif
               font-size: 8pt
-              background-color: #555
               border-radius: 4pt
               height: 16pt
               line-height: 16pt
               padding: 0 5pt
+              > span.inner-tag
+                display: inline-block
+                height: 16pt
+                padding: 0 5pt
+                margin-left: 5pt
+                line-height: 16pt
+                margin-right: -5pt
+                border-top-right-radius: 5pt
+                border-bottom-right-radius: 5pt
+                background-color: rgba(0, 0, 0, 0.2)
               &.unassigned
                 background-color: #333
                 color: #777
