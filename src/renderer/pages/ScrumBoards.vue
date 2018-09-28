@@ -33,7 +33,7 @@
           <ul v-if="boardTicketsMap.get(i).length" class="column-list">
             <li
               v-for="({ title, description, epicId, id: ticketId, point }) in boardTicketsMap.get(i)"
-              :key="title"
+              :key="`${title}-${ticketId}`"
             >
               <span class="point">{{ point }}</span>
               <h3>{{ title }}</h3>
