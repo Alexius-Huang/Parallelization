@@ -261,7 +261,7 @@ main
               margin-top: 10px
               display: none
               > button
-                background-color: rgba(255, 255, 255, 0.1)
+                // background-color: rgba(255, 255, 255, 0.1)
                 display: inline-block
                 width: 25%
                 height: 20pt
@@ -270,7 +270,7 @@ main
                 &:hover
                   background-color: rgba(255, 255, 255, 0.2)
                 &:disabled
-                  background-color: rgba(255, 255, 255, 0.05)
+                  // background-color: rgba(255, 255, 255, 0.05)
                   > img
                     opacity: 0.54
 

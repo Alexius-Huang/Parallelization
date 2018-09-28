@@ -17,13 +17,22 @@
         "rgba(255, 255, 255, 0.84)"
       ],
       "id": 2
+    },
+    {
+      "title": "New Test Epic",
+      "description": "This is the test epic",
+      "color": [
+        "#FFB300",
+        "rgba(0, 0, 0, 0.84)"
+      ],
+      "id": 3
     }
   ],
   "tickets": [
     {
       "epicId": 1,
       "boardId": 1,
-      "boardState": 1,
+      "boardState": 0,
       "title": "Your First Ticket",
       "point": 1,
       "description": "This is the ticket assigned in your very first epic. You can add more tickets or adjust the values of this ticket!",
@@ -32,7 +41,7 @@
     {
       "epicId": 1,
       "boardId": 1,
-      "boardState": 1,
+      "boardState": 0,
       "title": "Your Second Ticket",
       "point": 1.5,
       "description": "This is the ticket assigned in your very first epic. You can add more tickets or adjust the values of this ticket!",
@@ -59,26 +68,26 @@
     {
       "title": "Hello",
       "description": "World",
-      "point": 2,
-      "epicId": 1,
+      "point": 1,
+      "epicId": -1,
       "boardId": -1,
       "boardState": -1,
       "id": 5
     },
     {
-      "title": "Hello",
-      "description": "Again",
-      "point": 1.5,
+      "title": "Another ticket",
+      "description": "Hello",
+      "point": 2,
       "epicId": 1,
       "boardId": -1,
       "boardState": -1,
       "id": 6
     },
     {
-      "title": "long long longlong long longlong long longlong long longlong long long",
-      "description": "hello",
-      "point": 0,
-      "epicId": -1,
+      "title": "Another Test Ticket",
+      "description": "Hello",
+      "point": 1,
+      "epicId": 1,
       "boardId": -1,
       "boardState": -1,
       "id": 7
@@ -97,6 +106,32 @@
         "#FDD835",
         "rgba(0, 0, 0, 0.84)"
       ]
+    }
+  ],
+  "messages": [
+    {
+      "type": 0,
+      "message": "You've created a ticket: Hello",
+      "createdAt": 1538120779317,
+      "id": 1
+    },
+    {
+      "type": 0,
+      "message": "You've created a ticket: Another ticket",
+      "createdAt": 1538123117273,
+      "id": 2
+    },
+    {
+      "type": 0,
+      "message": "You've created a ticket: Another Test Ticket",
+      "createdAt": 1538125480730,
+      "id": 3
+    },
+    {
+      "type": 1,
+      "message": "You've created an epic: New Test Epic",
+      "createdAt": 1538125857001,
+      "id": 4
     }
   ]
 }

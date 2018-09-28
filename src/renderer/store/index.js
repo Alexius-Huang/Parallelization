@@ -3,6 +3,7 @@ import Vuex from 'vuex';
 import Router from './Router';
 import Epics from './Epics';
 import Boards from './Boards';
+import Messages from './Messages';
 
 Vue.use(Vuex);
 
@@ -11,5 +12,6 @@ export default new Vuex.Store({
     router: Router,
     epics: Epics,
     boards: Boards,
+    messages: Messages,
   },
 });

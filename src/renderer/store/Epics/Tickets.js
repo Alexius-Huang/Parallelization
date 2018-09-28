@@ -5,6 +5,7 @@
 import { injectGetters, injectMutations } from '../helper';
 import * as API from '../../API';
 // const readFile = util.promisify(fs.readFile);
+import { MessageTypes } from '../../resources/message-types';
 
 const defaultState = { data: new Map() };
 
@@ -30,7 +31,7 @@ export default {
     //     console.error('[Fetch Tickets Failure] Should specify (epic) id');
     //   }
     // },
-    async create({ commit, getters }, payload = {}) {
+    async create({ commit, getters, dispatch }, payload = {}) {
       const {
         title,
         description,
@@ -54,6 +55,12 @@ export default {
         boardId: -1,
         boardState: -1,
       });
+
+      const createMessagePayload = {
+        type: MessageTypes.CREATE_TICKET,
+        meta: { title },
+      };
+      await dispatch('messages/create', createMessagePayload, { root: true });
 
       const newData = new Map(getters.data).set(data.id, data);
       commit('setData', newData);

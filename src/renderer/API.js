@@ -43,3 +43,16 @@ export function fetchBoards() {
   return fetch(`${URL}/boards`)
     .then(response => response.json());
 }
+
+export function fetchMessages({ page, limit = 10 }) {
+  return fetch(`${URL}/messages?_page=${page}&_limit=${limit}&_sort=createdAt&_order=desc`)
+    .then(response => response.json());
+}
+
+export function createMessage(data) {
+  return fetch(`${URL}/messages`, {
+    body: JSON.stringify(data),
+    headers: { 'content-type': 'application/json' },
+    method: 'POST',
+  }).then(response => response.json());
+}

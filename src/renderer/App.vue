@@ -25,11 +25,12 @@ export default {
     },
     async mapRouteToDispatch(to = {}) { // , from = {}) {
       const { it } = this;
-      const { commit } = this.$store;
+      const { commit, dispatch } = this.$store;
       // const { query, params } = getters['router/route'];
 
       if (it.isIndexPage) {
-        /* Empty */
+        await dispatch('messages/reset');
+        await dispatch('messages/nextPage');
       } else if (it.isEpicsPage) {
         // await dispatch('epics/fetch');
         // await dispatch('epics/tickets/fetchAll');

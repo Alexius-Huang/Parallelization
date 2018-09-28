@@ -1,6 +1,7 @@
 /* eslint-disable no-console */
 import { injectGetters, injectMutations } from './helper';
 import Tickets from './Epics/Tickets';
+import { MessageTypes } from '../resources/message-types';
 import * as API from '../API';
 
 const defaultState = { data: new Map(), focused: -1 };
@@ -39,7 +40,7 @@ export default {
       const result = data.reduce((acc, cur) => acc.set(cur.id, cur), new Map());
       commit('setData', result);
     },
-    async create({ getters, commit }, payload = {}) {
+    async create({ getters, commit, dispatch }, payload = {}) {
       const { title, description } = payload;
 
       if (
@@ -55,6 +56,13 @@ export default {
         description,
         color: randomColor(),
       });
+
+      const createMessagePayload = {
+        type: MessageTypes.CREATE_EPIC,
+        meta: { title },
+      };
+      await dispatch('messages/create', createMessagePayload, { root: true });
+
       const newData = new Map(getters.data).set(data.id, data);
       commit('setData', newData);
     },
