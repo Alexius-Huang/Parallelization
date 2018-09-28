@@ -49,7 +49,7 @@ export default {
       const data = await API.createTicket({
         title,
         description,
-        point: Number.parseInt(point, 10) || 0,
+        point: Math.round(Number.parseFloat(point, 10) * 10) / 10 || 0,
         epicId: epicId || -1,
         boardId: -1,
         boardState: -1,

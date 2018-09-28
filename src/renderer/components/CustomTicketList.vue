@@ -1,11 +1,11 @@
 <template>
   <ul class="ticket-list">
     <li
-      v-for="{ id, epicId, title, point, boardId, boardState } in $props.tickets"
+      v-for="{ id, description, epicId, title, point, boardId, boardState } in $props.tickets"
       :key="id"
     >
       <p>
-        {{ title }}
+        {{ truncate(title, 40) }}
         <tag
           v-if="epicId !== -1"
           :style="{
@@ -24,8 +24,22 @@
           :sub-title="boardsMap.get(boardId).columns[boardState]"
         />
 
-        <span class="point">{{ point }}</span>
+        <span class="right-section">
+          <span class="point">
+            {{ point }}
+          </span>
+          <span class="btn-group-wrapper">
+            <button @click="trigger(id)" :class="{ active: triggeredIds.includes(id) }">
+              <img :src="icons.chevronLeft" alt="More Info of Ticket" />
+            </button>
+          </span>
+        </span>
       </p>
+
+      <div class="detail" :class="{ active: triggeredIds.includes(id) }">
+        <h2>{{ title }}</h2>
+        <p>{{ description }}</p>
+      </div>
     </li>
 
     <li v-if="$props.tickets.length === 0" class="no-ticket">
@@ -36,22 +50,47 @@
 
 <script>
 import Tag from '@/components/Tag';
+import chevronLeft from '@/assets/chevron-left.svg';
 
 export default {
   components: { Tag },
   props: ['tickets', 'no-ticket-message'],
+  data() {
+    return {
+      icons: { chevronLeft },
+      triggeredIds: [],
+    };
+  },
   computed: {
     epicsMap() { return this.$store.getters['epics/data']; },
     boardsMap() { return this.$store.getters['boards/data']; },
+  },
+  methods: {
+    truncate(string, length) {
+      if (string.length > length) {
+        return `${string.substring(0, length)}...`;
+      }
+      return string;
+    },
+    trigger(id) {
+      if (this.triggeredIds.includes(id)) {
+        const result = [...this.triggeredIds];
+        result.splice(result.indexOf(id), 1);
+        this.triggeredIds = result;
+      } else {
+        this.triggeredIds = [...this.triggeredIds, id];
+      }
+    },
   },
 };
 </script>
 
 <style scoped lang="sass">
+@import '../sass/_shared.sass'
+
 ul.ticket-list
-  // margin-top: 24px
   > li
-    height: 24pt
+    // height: 24pt
     padding: 0 10pt
     border-left: 1pt solid #555
     border-right: 1pt solid #555
@@ -81,15 +120,48 @@ ul.ticket-list
       font-family: 'Roboto Mono', sans-serif
       font-size: 10pt
       position: relative
-      > span.point
+      white-space: nowrap
+      overflow: hidden
+      > span.right-section
         position: absolute
         right: 0
-        font-weight: 400
-        font-family: 'Maven Pro', sans-serif
-        background-color: #555
-        width: 30pt
-        text-align: center
-        display: inline-block
         transition: .25s
+        > span.point
+          vertical-align: top
+          display: inline-block
+          background-color: #555
+          width: 30pt
+          font-weight: 400
+          font-family: 'Maven Pro', sans-serif
+          text-align: center
+        > span.btn-group-wrapper
+          display: inline-block
+          vertical-align: top
+          > button
+            @include vertical-align
+            width: 20pt
+            > img
+              opacity: 0.3
+            &:hover > img
+              opacity: 0.6
+            &.active
+              transform: rotate(-90deg)
+
+    > input.detail-trigger
+      display: none
+    > div.detail
+      margin: 0 -10pt
+      padding: 10pt
+      background-color: #444
+      border-top: 1pt solid #555
+      display: none
+      &.active
+        display: block
+        > h2
+          font-size: 12pt
+        > p
+          margin-top: 5pt
+          line-height: 1.5
+          font-size: 10pt
 </style>
 
