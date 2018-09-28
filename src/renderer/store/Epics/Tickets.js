@@ -30,6 +30,34 @@ export default {
     //     console.error('[Fetch Tickets Failure] Should specify (epic) id');
     //   }
     // },
+    async create({ commit, getters }, payload = {}) {
+      const {
+        title,
+        description,
+        point = 0,
+        epicId = -1,
+      } = payload;
+
+      if (
+        title === undefined ||
+        description === undefined
+      ) {
+        console.error('[Error] Should specify property `title`, `description` to create ticket data.');
+        return;
+      }
+
+      const data = await API.createTicket({
+        title,
+        description,
+        point: Number.parseInt(point, 10) || 0,
+        epicId: epicId || -1,
+        boardId: -1,
+        boardState: -1,
+      });
+
+      const newData = new Map(getters.data).set(data.id, data);
+      commit('setData', newData);
+    },
     async update({ commit, getters }, payload) {
       const { id, mutation } = payload;
       const ticketsMap = getters.data;

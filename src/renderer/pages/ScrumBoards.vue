@@ -5,15 +5,19 @@
     <section class="scrum-boards-list">
       <ul>
         <li
-          v-for="{ title, id } in boards"
+          v-for="{ title, id, color } in boards"
           :key="`${title}-${id}`"
           :class="{ active: id === focusBoardId }"
         >
-          <button>{{ title }}</button>
+          <button
+            :style="{ 'border-left-color': color[0] }"
+          >{{ title }}</button>
         </li>
 
         <li>
-          <button><img :src="icons.add" alt="Create Scrum Board" /></button>
+          <button
+            :style="{ 'border-left': 'none' }"
+          ><img :src="icons.add" alt="Create Scrum Board" /></button>
         </li>
       </ul>
     </section>
@@ -160,7 +164,7 @@ main
             background-color: #555
         > button
           padding: 0 10pt
-          border-radius: 15pt
+          border-left: 5pt solid
           font-family: 'Roboto Mono', sans-serif
           font-weight: 100
           height: 30pt
@@ -245,7 +249,7 @@ main
               border-radius: 3pt
               padding: 0 7pt
             > p.description
-              letter-spacing: .8px
+              letter-spacing: .3px
               display: none
               margin-top: 10px
               font-size: 9pt

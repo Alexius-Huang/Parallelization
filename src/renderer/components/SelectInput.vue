@@ -3,10 +3,15 @@
     <input
       type="text"
       v-model="input"
+      @input="handleInput"
       @focus="focused = true"
     />
     <ul class="option-list" :class="{ active: focused }">
-      <li v-for="{ title, value } in options" :key="value">
+      <li
+        v-for="{ title, value } in options"
+        :key="value"
+        :class="{ active: value === inputValue }"
+      >
         <button @click="handleChangeOption(title, value)">
           {{ title }}
         </button>
@@ -17,9 +22,14 @@
 
 <script>
 export default {
-  props: ['options', 'default', 'default-value'],
+  props: ['options', 'title', 'value'],
   data() {
-    return { focused: false, input: this.$props.default };
+    return {
+      focused: false,
+      input: this.$props.title,
+      inputValue: this.$props.value,
+      lockedTitle: this.$props.title,
+    };
   },
   methods: {
     blurWhenClickOutside(event) {
@@ -28,9 +38,24 @@ export default {
       }
     },
     handleChangeOption(title, value) {
-      this.input = title;
-      this.$emit('input', value);
+      this.$emit('input', { title, value });
       this.focused = false;
+    },
+    handleInput() {
+      this.input = this.lockedTitle;
+    },
+  },
+  computed: {
+    selection() {
+      const { title, value } = this.$props;
+      return { title, value };
+    },
+  },
+  watch: {
+    selection(newValue) {
+      this.lockedTitle = newValue.title;
+      this.input = newValue.title;
+      this.inputValue = newValue.value;
     },
   },
   mounted() {
@@ -81,4 +106,8 @@ div.select-input
         &:hover
           color: rgba(255, 255, 255, 0.87)
           background-color: rgba(255, 255, 255, 0.1)
+      &.active > button,
+      &.acitve > button:hover
+        color: rgba(255, 255, 255, 0.87)
+        background-color: rgba(255, 255, 255, 0.2)
 </style>

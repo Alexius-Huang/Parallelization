@@ -23,6 +23,14 @@ export function fetchTickets(epicId = null) {
     .then(response => response.json());
 }
 
+export function createTicket(data) {
+  return fetch(`${URL}/tickets`, {
+    body: JSON.stringify(data),
+    headers: { 'content-type': 'application/json' },
+    method: 'POST',
+  }).then(response => response.json());
+}
+
 export function updateTicket(id, data, method = 'PATCH') {
   return fetch(`${URL}/tickets/${id}`, {
     body: JSON.stringify(data),

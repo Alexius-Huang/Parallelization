@@ -5,7 +5,7 @@
     <section class="left">
       <ul class="epic-list">
         <li :class="{ active: isNaN(focusedEpicId) }">
-          <button @click="focusEpic(NaN)">All Tickets</button>
+          <button @click="focusEpic(-1)">All Tickets</button>
         </li>
         <li
           v-for="{ id, title, color } in epics"
@@ -39,6 +39,7 @@
             <p>
               {{ title }}
               <span
+                v-if="epicId !== -1"
                 class="tag"
                 :style="{
                   'background-color': epicsMap.get(epicId).color[0],
@@ -47,6 +48,7 @@
               >
                 {{ epicsMap.get(epicId).title }}
               </span>
+
               <span
                 v-if="boardId !== -1"
                 class="tag"
@@ -60,9 +62,7 @@
                   {{ boardsMap.get(boardId).columns[boardState] }}
                 </span>
               </span>
-              <span class="tag unassigned" v-else>
-                Unassigned
-              </span>
+
               <span class="point">{{ point }}</span>
             </p>
           </li>
@@ -142,8 +142,8 @@
           <p>Epic</p>
           <select-input
             :options="epicOptions"
-            default="Unassigned"
-            :default-value="-1"
+            :title="selectInput.createNewTicket.epicId.title"
+            :value="selectInput.createNewTicket.epicId.value"
             @input="handleChangeEpicOption"
           />
         </label>
@@ -180,7 +180,12 @@ export default {
           title: '',
           description: '',
           point: '',
-          epicId: '',
+          epicId: -1,
+        },
+      },
+      selectInput: {
+        createNewTicket: {
+          epicId: { title: 'Unassigned', value: -1 },
         },
       },
     };
@@ -188,7 +193,10 @@ export default {
   computed: {
     epicsMap() { return this.$store.getters['epics/data']; },
     epics() { return Array.from(this.epicsMap.values()); },
-    epicOptions() { return this.epics.map(({ title, id }) => ({ title, value: id })); },
+    epicOptions() {
+      const options = this.epics.map(({ title, id }) => ({ title, value: id }));
+      return [{ title: 'Unassigned', value: -1 }].concat(options);
+    },
     focusedEpicId() { return this.$store.getters['epics/focused']; },
     focusedEpic() {
       return this.epicsMap.get(this.focusedEpicId) || {
@@ -197,6 +205,7 @@ export default {
       };
     },
     boardsMap() { return this.$store.getters['boards/data']; },
+    boards() { return Array.from(this.boardsMap.values()); },
     ticketsMap() { return this.$store.getters['epics/tickets/data']; },
     tickets() { return Array.from(this.ticketsMap.values()); },
     filteredTickets() {
@@ -219,12 +228,37 @@ export default {
       this.inputs.createNewEpic.description = '';
       this.modal.createNewEpic = false;
     },
+    async createNewTicket() {
+      const {
+        title,
+        description,
+        point,
+        epicId,
+      } = this.inputs.createNewTicket;
+      const input = {
+        title,
+        description,
+        point,
+        epicId,
+      };
+      await this.$store.dispatch('epics/tickets/create', input);
+      this.inputs.createNewTicket.title = '';
+      this.inputs.createNewTicket.description = '';
+      this.inputs.createNewTicket.point = '';
+      this.modal.createNewTicket = false;
+    },
     async focusEpic(id) {
+      const option = this.epicOptions.find(({ value }) => value === id);
+      this.inputs.createNewTicket.epicId = option ? option.value : -1;
+      this.selectInput.createNewTicket.epicId.title = option ? option.title : 'Unassigned';
+      this.selectInput.createNewTicket.epicId.value = option ? option.value : -1;
+
       this.$store.commit('epics/setFocused', id);
     },
-    handleChangeEpicOption(value) {
-      console.log(value);
+    handleChangeEpicOption({ title, value }) {
       this.inputs.createNewTicket.epicId = value;
+      this.selectInput.createNewTicket.epicId.title = title;
+      this.selectInput.createNewTicket.epicId.value = value;
     },
   },
 };
@@ -345,7 +379,7 @@ main
             position: relative
             > span.tag
               display: inline-block
-              font-family: 'Ubuntu', sans-serif
+              font-family: 'Maven Pro', sans-serif
               font-size: 8pt
               border-radius: 4pt
               height: 16pt
@@ -367,7 +401,8 @@ main
             > span.point
               position: absolute
               right: 0
-              font-family: 'Ubuntu', sans-serif
+              font-weight: 400
+              font-family: 'Maven Pro', sans-serif
               background-color: #555
               width: 30pt
               text-align: center

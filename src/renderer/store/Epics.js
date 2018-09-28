@@ -3,7 +3,7 @@ import { injectGetters, injectMutations } from './helper';
 import Tickets from './Epics/Tickets';
 import * as API from '../API';
 
-const defaultState = { data: new Map(), focused: NaN };
+const defaultState = { data: new Map(), focused: -1 };
 
 // [BG, Font]
 const colors = [
@@ -55,7 +55,7 @@ export default {
         description,
         color: randomColor(),
       });
-      const newData = new Map(Array.from(getters.data)).set(data.id, data);
+      const newData = new Map(getters.data).set(data.id, data);
       commit('setData', newData);
     },
   },

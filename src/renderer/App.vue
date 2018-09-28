@@ -64,17 +64,24 @@ export default {
 
 <style lang="sass">
 @import url('https://fonts.googleapis.com/css?family=Roboto+Mono:100,300')
-@import url('https://fonts.googleapis.com/css?family=Ubuntu:300,400');
+// @import url('https://fonts.googleapis.com/css?family=Ubuntu:300,400');
+@import url('https://fonts.googleapis.com/css?family=Maven+Pro:400,500');
 
 html, body
   background-color: #333
   padding: 0
   margin: 0
-  font-weight: 100
-  font-family: 'Ubuntu', sans-serif
+  font-weight: 400
+  font-family: 'Maven Pro', sans-serif
   color: rgba(255, 255, 255, 0.63)
 
-h1, h2, h3, h4, h5, h6, p
+h1, h2, h3, h4, h5, h6
+  font-weight: 500
+  margin: 0
+  cursor: default
+  user-select: none
+p
+  font-weight: 400
   margin: 0
   cursor: default
   user-select: none
@@ -91,6 +98,7 @@ li
   user-select: none
 
 button
+  font-family: 'Maven Pro', sans-serif
   user-select: none
   background-color: transparent
   border: none
