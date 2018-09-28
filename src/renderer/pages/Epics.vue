@@ -4,7 +4,7 @@
 
     <section class="left">
       <ul class="epic-list">
-        <li :class="{ active: isNaN(focusedEpicId) }">
+        <li :class="{ active: focusedEpicId === -1 }">
           <button @click="focusEpic(-1)">All Tickets</button>
         </li>
         <li
@@ -31,14 +31,34 @@
           ><img :src="icons.add" alt="Create Epic" /></button>
         </div>
 
-        <custom-ticket-list
-          v-if="tickets.length"
-          :tickets="filteredTickets"
-        />
-
-        <div v-else class="no-tickets">
-          <p>Currently there are no tickets in this epic.</p>
+        <div
+          v-if="focusedEpicId !== -1 && boards.length"
+          v-for="{ id, title, color } in boards"
+          :key="`${title}-${id}`"
+          class="board-list-wrapper"
+        >
+          <h2 :style="{ 'border-left-color': color[0] }">{{ title }}</h2>
+          <custom-ticket-list
+            :tickets="
+              filteredTicketsByEpic
+                .filter(({ boardId }) => boardId === id)
+            "
+            :no-ticket-message="`No tickets assigned in ${title} ...`"
+          />
         </div>
+
+        <div class="board-list-wrapper">
+          <h2 v-if="focusedEpicId !== -1">Scrum Board Unassigned Tickets</h2>
+          <custom-ticket-list
+            v-if="tickets.length"
+            :tickets="filteredTickets"
+            :no-ticket-message="`No tickets left...`"
+          />
+        </div>
+
+        <!-- <div v-else class="no-tickets">
+          <p>Currently there are no tickets in this epic.</p>
+        </div> -->
 
         <div class="btn-wrapper">
           <button
@@ -184,10 +204,14 @@ export default {
     ticketsMap() { return this.$store.getters['epics/tickets/data']; },
     tickets() { return Array.from(this.ticketsMap.values()); },
     filteredTickets() {
-      if (!Number.isNaN(this.focusedEpicId)) {
-        return this.tickets.filter(({ epicId }) => epicId === this.focusedEpicId);
+      if (this.focusedEpicId !== -1) {
+        return this.filteredTicketsByEpic
+          .filter(({ boardId }) => boardId === -1);
       }
       return this.tickets;
+    },
+    filteredTicketsByEpic() {
+      return this.tickets.filter(({ epicId }) => epicId === this.focusedEpicId);
     },
   },
   methods: {
@@ -326,8 +350,18 @@ main
             width: 100%
             height: 100%
 
-      > ul.ticket-list
-        margin-top: 24px
+      > div.board-list-wrapper
+        > h2
+          font-size: 14pt
+          margin-top: 24px
+          font-weight: 400
+          border-left: 3pt solid
+          padding-left: 10pt
+        > ul.ticket-list
+          margin-top: 12px
+
+        + div.board-list-wrapper
+          margin-top: 36px
 
       > div.no-tickets
         margin-top: 12pt

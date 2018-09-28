@@ -33,7 +33,7 @@ export default {
       } else if (it.isEpicsPage) {
         // await dispatch('epics/fetch');
         // await dispatch('epics/tickets/fetchAll');
-        commit('epics/setFocused', NaN);
+        commit('epics/setFocused', -1);
       } else if (it.isScrumBoardsPage) {
         // await Promise.all([
         //   dispatch('epics/fetch'),

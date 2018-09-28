@@ -27,6 +27,10 @@
         <span class="point">{{ point }}</span>
       </p>
     </li>
+
+    <li v-if="$props.tickets.length === 0" class="no-ticket">
+      <p>{{ $props.noTicketMessage || 'Currently There Are No Tickets' }}</p>
+    </li>
   </ul>
 </template>
 
@@ -35,7 +39,7 @@ import Tag from '@/components/Tag';
 
 export default {
   components: { Tag },
-  props: ['tickets'],
+  props: ['tickets', 'no-ticket-message'],
   computed: {
     epicsMap() { return this.$store.getters['epics/data']; },
     boardsMap() { return this.$store.getters['boards/data']; },
@@ -65,6 +69,13 @@ ul.ticket-list
       > p > span.point
         background-color: #666
         transition: .25s
+    &.no-ticket
+      text-align: center
+      background-color: rgba(0, 0, 0, 0.05)
+      color: rgba(255, 255, 255, 0.3)
+      border-color: rgba(0, 0, 0, 0.1)
+      > p
+        font-size: 8pt
     > p
       line-height: 24pt
       font-family: 'Roboto Mono', sans-serif
