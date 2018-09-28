@@ -18,28 +18,28 @@ export function timestampStringify(timestamp) {
   const withinOneHour = now - anHour < timestamp;
   if (withinOneHour) {
     const delta = now - timestamp;
-    const minutes = Math.round(delta / aMinute);
+    const minutes = Math.floor(delta / aMinute);
     return `About ${minutes} minute${minutes > 1 ? 's' : ''} ago`;
   }
 
   const withinOneDay = now - aDay < timestamp;
   if (withinOneDay) {
     const delta = now - timestamp;
-    const hours = Math.round(delta / anHour);
+    const hours = Math.floor(delta / anHour);
     return `About ${hours} hour${hours > 1 ? 's' : ''} ago`;
   }
 
   const withinOneWeek = now - aWeek < timestamp;
   if (withinOneWeek) {
     const delta = now - timestamp;
-    const days = Math.round(delta / aDay);
+    const days = Math.floor(delta / aDay);
     return `About ${days} day${days > 1 ? 's' : ''} ago`;
   }
 
   const withinOneMonth = now - aMonth < timestamp;
   if (withinOneMonth) {
     const delta = now - timestamp;
-    const weeks = Math.round(delta / aWeek);
+    const weeks = Math.floor(delta / aWeek);
     return `About ${weeks} week${weeks > 1 ? 's' : ''} ago`;
   }
 

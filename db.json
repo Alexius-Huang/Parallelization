@@ -17,15 +17,6 @@
         "rgba(255, 255, 255, 0.84)"
       ],
       "id": 2
-    },
-    {
-      "title": "New Test Epic",
-      "description": "This is the test epic",
-      "color": [
-        "#FFB300",
-        "rgba(0, 0, 0, 0.84)"
-      ],
-      "id": 3
     }
   ],
   "tickets": [
@@ -57,40 +48,13 @@
       "id": 3
     },
     {
-      "id": 4,
       "epicId": 2,
       "boardId": -1,
       "boardState": -1,
-      "title": "Another Ticket",
-      "point": 2,
-      "description": "This is another ticket from another epic"
-    },
-    {
-      "title": "Hello",
-      "description": "World",
-      "point": 1,
-      "epicId": -1,
-      "boardId": -1,
-      "boardState": -1,
-      "id": 5
-    },
-    {
-      "title": "Another ticket",
-      "description": "Hello",
-      "point": 2,
-      "epicId": 1,
-      "boardId": -1,
-      "boardState": -1,
-      "id": 6
-    },
-    {
-      "title": "Another Test Ticket",
-      "description": "Hello",
-      "point": 1,
-      "epicId": 1,
-      "boardId": -1,
-      "boardState": -1,
-      "id": 7
+      "title": "Your Fourth Ticket",
+      "point": 1.5,
+      "description": "Ticket for the second epic",
+      "id": 4
     }
   ],
   "boards": [
@@ -108,30 +72,5 @@
       ]
     }
   ],
-  "messages": [
-    {
-      "type": 0,
-      "message": "You've created a ticket: Hello",
-      "createdAt": 1538120779317,
-      "id": 1
-    },
-    {
-      "type": 0,
-      "message": "You've created a ticket: Another ticket",
-      "createdAt": 1538123117273,
-      "id": 2
-    },
-    {
-      "type": 0,
-      "message": "You've created a ticket: Another Test Ticket",
-      "createdAt": 1538125480730,
-      "id": 3
-    },
-    {
-      "type": 1,
-      "message": "You've created an epic: New Test Epic",
-      "createdAt": 1538125857001,
-      "id": 4
-    }
-  ]
+  "messages": []
 }

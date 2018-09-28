@@ -58,7 +58,7 @@ export default {
 
       const createMessagePayload = {
         type: MessageTypes.CREATE_TICKET,
-        meta: { title },
+        meta: { title, epicId, point },
       };
       await dispatch('messages/create', createMessagePayload, { root: true });
 

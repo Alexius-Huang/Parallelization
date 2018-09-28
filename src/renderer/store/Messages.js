@@ -32,7 +32,7 @@ export default {
       commit('setCurrentPage', 0);
       commit('setHasNextPage', true);
     },
-    async create(_, payload) {
+    async create({ rootGetters }, payload) {
       const { type, meta } = payload;
 
       if (type === undefined) {
@@ -41,12 +41,22 @@ export default {
       }
 
       let message;
+      const info = [];
       if (type === MessageTypes.CREATE_TICKET) {
-        const { title } = meta;
-        message = `You've created a ticket: ${title}`;
+        const { title, epicId, point } = meta;
+        message = 'New Ticket Created';
+        info.push({ title: 'Ticket Name', content: title });
+        if (epicId !== -1) {
+          const epicsMap = rootGetters['epics/data'];
+          info.push({ title: 'Assigned Epic', content: epicsMap.get(epicId).title });
+        }
+        if (point !== 0) {
+          info.push({ title: 'Assigned Point', content: point });
+        }
       } else if (type === MessageTypes.CREATE_EPIC) {
         const { title } = meta;
-        message = `You've created an epic: ${title}`;
+        message = 'New Epic Created';
+        info.push({ title: 'Epic Name', content: title });
       } else {
         console.error('[Error] Unknown message type.');
       }
@@ -54,6 +64,7 @@ export default {
       const input = {
         type,
         message,
+        info,
         createdAt: Date.now(),
       };
 

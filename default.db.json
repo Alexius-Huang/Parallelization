@@ -3,30 +3,74 @@
     {
       "id": 1,
       "title": "Your First Epic",
-      "description": "This is the beginning of your first epic. You can add tickets into this epic and start working on your project!"
+      "description": "This is the beginning of your first epic. You can add tickets into this epic and start working on your project!",
+      "color": [
+        "#1E88E5",
+        "rgba(255, 255, 255, 0.84)"
+      ]
+    },
+    {
+      "title": "Another Epic",
+      "description": "This is another epic",
+      "color": [
+        "#43A047",
+        "rgba(255, 255, 255, 0.84)"
+      ],
+      "id": 2
     }
   ],
   "tickets": [
     {
-      "id": 1,
       "epicId": 1,
+      "boardId": 1,
+      "boardState": 0,
       "title": "Your First Ticket",
       "point": 1,
-      "description": "This is the ticket assigned in your very first epic. You can add more tickets or adjust the values of this ticket!"
+      "description": "This is the ticket assigned in your very first epic. You can add more tickets or adjust the values of this ticket!",
+      "id": 1
     },
     {
-      "id": 2,
       "epicId": 1,
+      "boardId": 1,
+      "boardState": 0,
       "title": "Your Second Ticket",
       "point": 1.5,
-      "description": "This is the ticket assigned in your very first epic. You can add more tickets or adjust the values of this ticket!"
+      "description": "This is the ticket assigned in your very first epic. You can add more tickets or adjust the values of this ticket!",
+      "id": 2
     },
     {
-      "id": 3,
       "epicId": 1,
+      "boardId": 1,
+      "boardState": 0,
       "title": "Your Third Ticket",
       "point": 3,
-      "description": "This is the ticket assigned in your very first epic. You can add more tickets or adjust the values of this ticket!"
+      "description": "This is the ticket assigned in your very first epic. You can add more tickets or adjust the values of this ticket!",
+      "id": 3
+    },
+    {
+      "epicId": 2,
+      "boardId": -1,
+      "boardState": -1,
+      "title": "Your Fourth Ticket",
+      "point": 1.5,
+      "description": "Ticket for the second epic",
+      "id": 4
     }
-  ]
+  ],
+  "boards": [
+    {
+      "id": 1,
+      "title": "First Scrum Board",
+      "columns": [
+        "TODO",
+        "On Progress",
+        "Completed"
+      ],
+      "color": [
+        "#FDD835",
+        "rgba(0, 0, 0, 0.84)"
+      ]
+    }
+  ],
+  "messages": []
 }

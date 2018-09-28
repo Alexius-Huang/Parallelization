@@ -1,10 +1,10 @@
 <template>
   <main>
     <section class="messages">
-      <h2>Notifications</h2>
-      <ul>
+      <h2><img :src="icons.feedback" alt="Push Notifications"> Notifications</h2>
+      <ul v-if="messages.length">
         <li
-          v-for="{ id, type, message, createdAt } in messages"
+          v-for="{ id, type, message, info, createdAt } in messages"
           :key="id"
         >
           <div class="img-wrapper">
@@ -12,13 +12,25 @@
           </div>
           <div class="message-info">
             <p>{{ message }}</p>
-            <p class="time">
+            <p
+              class="additional-info"
+              v-for="({ title, content }, i) in info"
+              :key="`${i}-${title}`"
+            >
+              <img :src="icons.info" alt="Info icon" />
+              <span class="text-wrapper">{{ title }} - {{ content }}</span>
+            </p>
+            <p class="additional-info">
               <img :src="icons.clock" alt="Notification Created At" />
               <span class="text-wrapper">{{ timestampStringify(createdAt) }}</span>
             </p>
           </div>
         </li>
       </ul>
+
+      <p v-else class="no-message">
+        Currently there are no message ...
+      </p>
     </section>
   </main>
 </template>
@@ -26,11 +38,20 @@
 <script>
 import { MessageIcons } from '@/resources/message-types';
 import clock from '@/assets/clock.svg';
+import info from '@/assets/info.svg';
+import feedback from '@/assets/feedback.svg';
 import { timestampStringify } from '@/helpers/time';
 
 export default {
   data() {
-    return { MessageIcons, icons: { clock } };
+    return {
+      MessageIcons,
+      icons: {
+        clock,
+        info,
+        feedback,
+      },
+    };
   },
   computed: {
     messages() { return this.$store.getters['messages/data']; },
@@ -50,12 +71,25 @@ main
   padding: 
   > section
     > h2
+      @include vertical-align
       line-height: 60pt
+      padding-left: 15pt
       font-family: 'Roboto Mono', sans-serif
       font-weight: 100
+      > img
+        opacity: 0.5
 
   > section.messages
+    margin-top: -50pt
+    height: 100vh
     width: 50%
+    padding: 50pt 15pt 0 15pt
+    box-sizing: border-box
+    background-color: #444
+    > p.no-message
+      font-size: 12pt
+      padding-left: 15pt
+      color: rgba(255, 255, 255, 0.32)
     > ul
       height: calc(100vh - 110pt)
       overflow-y: auto
@@ -71,7 +105,7 @@ main
           position: absolute
           width: 2pt
           height: calc(100% - 10pt)
-          background-color: #555
+          background-color: #666
           left: 14pt
           top: 30pt
         + li
@@ -82,7 +116,7 @@ main
           width: 10pt
           height: 10pt
           border-radius: 10pt
-          background-color: #555
+          background-color: #666
           position: absolute
           left: 10pt
           bottom: -25pt
@@ -95,7 +129,7 @@ main
           top: 0
           text-align: center
           border-radius: 15pt
-          border: 2pt solid #555
+          border: 2pt solid #666
           box-sizing: border-box
           @include vertical-align
           > img.icon
@@ -107,12 +141,12 @@ main
           > p
             font-size: 12pt
             line-height: 1.5
-          > p.time
+          > p.additional-info
             height: 20pt
             @include vertical-align
             > span.text-wrapper
               font-size: 9pt
-              color: rgba(255, 255, 255, 0.32)
+              color: rgba(255, 255, 255, 0.54)
 
             > img
               width: 12pt
