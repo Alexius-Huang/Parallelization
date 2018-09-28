@@ -31,42 +31,10 @@
           ><img :src="icons.add" alt="Create Epic" /></button>
         </div>
 
-        <ul v-if="tickets.length" class="ticket-list">
-          <li
-            v-for="{ id, epicId, title, point, boardId, boardState } in filteredTickets"
-            :key="id"
-          >
-            <p>
-              {{ title }}
-              <span
-                v-if="epicId !== -1"
-                class="tag"
-                :style="{
-                  'background-color': epicsMap.get(epicId).color[0],
-                  'color': epicsMap.get(epicId).color[1],
-                }"
-              >
-                {{ epicsMap.get(epicId).title }}
-              </span>
-
-              <span
-                v-if="boardId !== -1"
-                class="tag"
-                :style="{
-                  'background-color': boardsMap.get(boardId).color[0],
-                  'color': boardsMap.get(boardId).color[1],
-                }"
-              >
-                {{ boardsMap.get(boardId).title }}
-                <span class="inner-tag">
-                  {{ boardsMap.get(boardId).columns[boardState] }}
-                </span>
-              </span>
-
-              <span class="point">{{ point }}</span>
-            </p>
-          </li>
-        </ul>
+        <custom-ticket-list
+          v-if="tickets.length"
+          :tickets="filteredTickets"
+        />
 
         <div v-else class="no-tickets">
           <p>Currently there are no tickets in this epic.</p>
@@ -160,10 +128,17 @@
 <script>
 import Modal from '@/components/Modal';
 import SelectInput from '@/components/SelectInput';
+import Tag from '@/components/Tag';
+import CustomTicketList from '@/components/CustomTicketList';
 import add from '@/assets/add.svg';
 
 export default {
-  components: { Modal, SelectInput },
+  components: {
+    Modal,
+    SelectInput,
+    Tag,
+    CustomTicketList,
+  },
   data() {
     return {
       icons: { add },
@@ -353,61 +328,6 @@ main
 
       > ul.ticket-list
         margin-top: 24px
-        > li
-          height: 24pt
-          padding: 0 10pt
-          border-left: 1pt solid #555
-          border-right: 1pt solid #555
-          border-bottom: 1pt solid #555
-          &:first-child
-            border-top-left-radius: 5px
-            border-top-right-radius: 5px
-            border-top: 1pt solid #555
-          &:last-child
-            border-bottom-left-radius: 5px
-            border-bottom-right-radius: 5px
-          &:hover
-            background-color: #555
-            transition: .25s
-            > p > span.point
-              background-color: #666
-              transition: .25s
-          > p
-            line-height: 24pt
-            font-family: 'Roboto Mono', sans-serif
-            font-size: 10pt
-            position: relative
-            > span.tag
-              display: inline-block
-              font-family: 'Maven Pro', sans-serif
-              font-size: 8pt
-              border-radius: 4pt
-              height: 16pt
-              line-height: 16pt
-              padding: 0 5pt
-              > span.inner-tag
-                display: inline-block
-                height: 16pt
-                padding: 0 5pt
-                margin-left: 5pt
-                line-height: 16pt
-                margin-right: -5pt
-                border-top-right-radius: 5pt
-                border-bottom-right-radius: 5pt
-                background-color: rgba(0, 0, 0, 0.2)
-              &.unassigned
-                background-color: #333
-                color: #777
-            > span.point
-              position: absolute
-              right: 0
-              font-weight: 400
-              font-family: 'Maven Pro', sans-serif
-              background-color: #555
-              width: 30pt
-              text-align: center
-              display: inline-block
-              transition: .25s
 
       > div.no-tickets
         margin-top: 12pt
