@@ -1,4 +1,4 @@
-const COLOR_CODES = {
+export const COLOR_CODES = {
   red: {
     50: ['#ffebee', 'rgba(0, 0, 0, 0.84)'],
     100: ['#ffcdd2', 'rgba(0, 0, 0, 0.84)'],
@@ -232,55 +232,8 @@ const COLOR_CODES = {
 const COLOR_CODES_KEYS = Object.keys(COLOR_CODES);
 const COLOR_CODES_DETAIL = [50, 100, 200, 300, 400, 500, 600, 700, 800, 900];
 
-const randomColor = () => {
+export const randomColor = () => {
   const randomCode = COLOR_CODES_KEYS[Math.floor(Math.random() * COLOR_CODES_KEYS.length)];
   const randomDetail = COLOR_CODES_DETAIL[Math.floor(Math.random() * COLOR_CODES_DETAIL.length)];
   return COLOR_CODES[randomCode][randomDetail];
-};
-
-const boardIds = [-1, 1, 2, 3];
-const randomBoardId = () => boardIds[Math.floor(Math.random() * boardIds.length)];
-const boardState = [0, 1, 2];
-const randomBoardState = () => boardState[Math.floor(Math.random() * boardState.length)];
-
-module.exports = () => {
-  const data = {
-    epics: [],
-    tickets: [],
-    boards: [],
-    messages: [],
-  };
-
-  for (let i = 1; i <= 3; i++) {
-    data.boards.push({
-      id: i,
-      title: `Board - ${i}`,
-      columns: ['TODO', 'On Progress', 'Completed'],
-      color: randomColor(),
-    });
-  }
-
-  for (let i = 1; i <= 5; i++) {
-    data.epics.push({
-      id: i,
-      title: `Epic - ${i}`,
-      description: `This is Epic - ${i}`,
-      color: randomColor(),
-    });
-
-    for (let j = 1; j <= 5; j++) {
-      const boardId = randomBoardId();
-      data.tickets.push({
-        epicId: i,
-        id: ((i - 1) * 5) + j,
-        boardId,
-        boardState: boardId === -1 ? -1 : randomBoardState(),
-        point: 1,
-        title: 'Sample Ticket',
-        description: 'Description of sample ticket',
-      });
-    }
-  }
-
-  return data;
 };
