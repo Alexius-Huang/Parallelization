@@ -109,5 +109,12 @@ export default {
         mutation: ticket => ({ ...ticket, boardState: ticket.boardState - 1 }),
       });
     },
+    async assignToBoard({ dispatch }, payload) {
+      const { id, boardId } = payload;
+      await dispatch('update', {
+        id,
+        mutation: ticket => ({ ...ticket, boardState: 0, boardId }),
+      });
+    },
   },
 };

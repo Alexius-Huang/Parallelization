@@ -1,11 +1,19 @@
 <template>
-  <ul class="ticket-list">
+  <ul
+    class="ticket-list"
+    @mouseup="handleListMouseUp($event)"
+    @mouseenter="handleListMouseEnter($event)"
+    @mouseleave="handleListMouseLeave($event)"
+  >
     <li
       v-for="{ id, description, epicId, title, point, boardId, boardState } in $props.tickets"
       :key="id"
+      @mousedown="handleTicketMouseDown({ event: $event, id })"
     >
       <p>
-        {{ truncate(title, 40) }}
+        <span class="text-wrapper">
+          {{ truncate(title, 40) }}
+        </span>
         <tag
           v-if="epicId !== -1"
           :style="{
@@ -54,7 +62,7 @@ import chevronLeft from '@/assets/chevron-left.svg';
 
 export default {
   components: { Tag },
-  props: ['tickets', 'no-ticket-message'],
+  props: ['tickets', 'no-ticket-message', 'board-id'],
   data() {
     return {
       icons: { chevronLeft },
@@ -81,6 +89,21 @@ export default {
         this.triggeredIds = [...this.triggeredIds, id];
       }
     },
+    handleTicketMouseDown({ event, id }) {
+      this.$emit('ticket-mousedown', { event, id });
+    },
+    handleListMouseUp($event) {
+      const { boardId } = this.$props;
+      this.$emit('list-mouseup', { event: $event, boardId });
+    },
+    handleListMouseEnter($event) {
+      const { boardId } = this.$props;
+      this.$emit('list-mouseenter', { event: $event, boardId });
+    },
+    handleListMouseLeave($event) {
+      const { boardId } = this.$props;
+      this.$emit('list-mouseleave', { event: $event, boardId });
+    },
   },
 };
 </script>
@@ -89,6 +112,9 @@ export default {
 @import '../sass/_shared.sass'
 
 ul.ticket-list
+  border: 1pt solid transparent
+  box-sizing: border-box
+  border-radius: 5pt
   > li
     // height: 24pt
     padding: 0 10pt
@@ -122,6 +148,7 @@ ul.ticket-list
       position: relative
       white-space: nowrap
       overflow: hidden
+      @include vertical-align
       > span.right-section
         position: absolute
         right: 0

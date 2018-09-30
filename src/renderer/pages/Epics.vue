@@ -43,7 +43,13 @@
               filteredTicketsByEpic
                 .filter(({ boardId }) => boardId === id)
             "
+            :class="{ highlight: boardListHighlight === id }"
+            :board-id="id"
             :no-ticket-message="`No tickets assigned in ${title} ...`"
+            @ticket-mousedown="handleTicketMouseDown"
+            @list-mouseup="handleListMouseUp"
+            @list-mouseenter="handleListMouseEnter"
+            @list-mouseleave="handleListMouseLeave"
           />
         </div>
 
@@ -52,7 +58,13 @@
           <custom-ticket-list
             v-if="tickets.length"
             :tickets="filteredTickets"
+            :class="{ highlight: boardListHighlight === -1 }"
+            :board-id="-1"
             :no-ticket-message="`No tickets left...`"
+            @ticket-mousedown="handleTicketMouseDown"
+            @list-mouseup="handleListMouseUp"
+            @list-mouseenter="handleListMouseEnter"
+            @list-mouseleave="handleListMouseLeave"
           />
         </div>
 
@@ -81,6 +93,32 @@
       @close="modal.createNewTicket = false"
       @submit="createNewTicket"
     />
+
+    <div
+      v-if="focusedEpicId !== -1 && draggingTicket"
+      class="dragged-list-item"
+      :style="{ left: `${mousePosition.x}px`, top: `${mousePosition.y}px` }"
+    >
+      <p>{{ draggedTicket.title }}</p>
+      <tag
+        v-if="draggedTicket.epicId !== -1"
+        :style="{
+          'background-color': epicsMap.get(draggedTicket.epicId).color[0],
+          'color': epicsMap.get(draggedTicket.epicId).color[1],
+        }"
+        :title="epicsMap.get(draggedTicket.epicId).title"
+      />
+      <tag
+        v-if="draggedTicket.boardId !== -1"
+        :style="{
+          'background-color': boardsMap.get(draggedTicket.boardId).color[0],
+          'color': boardsMap.get(draggedTicket.boardId).color[1],
+        }"
+        :title="boardsMap.get(draggedTicket.boardId).title"
+        :sub-title="boardsMap.get(draggedTicket.boardId).columns[draggedTicket.boardState]"
+      />
+      <p class="point">{{ draggedTicket.point }}</p>
+    </div>
   </main>
 </template>
 
@@ -109,6 +147,10 @@ export default {
         createNewEpic: false,
         createNewTicket: false,
       },
+      draggingTicket: false,
+      draggedTicketId: null,
+      mousePosition: { x: 0, y: 0 },
+      boardListHighlight: NaN,
     };
   },
   computed: {
@@ -135,6 +177,12 @@ export default {
     filteredTicketsByEpic() {
       return this.tickets.filter(({ epicId }) => epicId === this.focusedEpicId);
     },
+    draggedTicket() {
+      if (this.draggingTicket) {
+        return this.ticketsMap.get(this.draggedTicketId);
+      }
+      return {};
+    },
   },
   methods: {
     async createNewEpic(input) {
@@ -149,6 +197,54 @@ export default {
       this.$store.commit('epics/setFocused', id);
       this.$refs.createNewTicketModal.changeEpicOption(id);
     },
+    handleTicketMouseDown(value) {
+      this.draggedTicketId = value.id;
+      this.draggingTicket = true;
+    },
+    async handleListMouseUp(value) {
+      if (this.draggingTicket && this.focusedEpicId !== -1) {
+        const { draggedTicketId: id, $store: { dispatch } } = this;
+        const { boardId } = value;
+        if (boardId !== this.draggedTicket.boardId) {
+          await dispatch('epics/tickets/assignToBoard', { id, boardId });
+        }
+        this.draggedTicketId = null;
+        this.draggingTicket = false;
+        this.boardListHighlight = NaN;
+      }
+    },
+    handleListMouseEnter(value) {
+      if (this.draggingTicket) {
+        const { boardId } = value;
+        this.boardListHighlight = boardId;
+      }
+    },
+    handleListMouseLeave() {
+      if (this.draggingTicket) {
+        this.boardListHighlight = NaN;
+      }
+    },
+    handleDocumentMouseMove(event) {
+      if (this.draggingTicket) {
+        const { pageX: x, pageY: y } = event;
+        this.mousePosition = { x, y };
+      }
+    },
+    handleDocumentMouseUp() {
+      if (this.draggingTicket) {
+        this.draggingTicket = false;
+        this.draggedTicketId = null;
+        this.boardListHighlight = NaN;
+      }
+    },
+  },
+  mounted() {
+    document.addEventListener('mousemove', this.handleDocumentMouseMove.bind(this));
+    document.addEventListener('mouseup', this.handleDocumentMouseUp.bind(this));
+  },
+  destroyed() {
+    document.removeEventListener('mousemove', this.handleDocumentMouseMove.bind(this));
+    document.removeEventListener('mouseup', this.handleDocumentMouseUp.bind(this));
   },
 };
 </script>
@@ -249,6 +345,10 @@ main
           padding-left: 10pt
         > ul.ticket-list
           margin-top: 12px
+          transition: .25s
+          &.highlight
+            transition: .25s
+            border-color: rgba(255, 255, 255, 0.54)
 
         + div.board-list-wrapper
           margin-top: 36px
@@ -271,4 +371,31 @@ main
           background-color: #555
           &:hover
             background-color: #666
+
+  > div.dragged-list-item
+    position: fixed
+    pointer-events: none
+    height: 24pt
+    background-color: rgba(255, 255, 255, 0.72)
+    color: rgba(0, 0, 0, 0.54)
+    padding: 0 12pt
+    border-radius: 5pt
+    white-space: nowrap
+    transform: translate(-50%, -50%)
+    @include vertical-align
+    > p
+      font-family: 'Roboto Mono', sans-serif
+      font-size: 10pt
+
+    > span.tag
+      margin-left: 6pt
+
+    > p.point
+      background-color: rgba(255, 255, 255, 0.84)
+      width: 25pt
+      margin-left: 12pt
+      height: 100%
+      line-height: 24pt
+      text-align: center
+
 </style>
