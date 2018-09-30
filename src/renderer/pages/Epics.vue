@@ -69,79 +69,18 @@
       </div>
     </section>
 
-    <modal :class="{ closed: !modal.createNewEpic }" width="60vw">
-      <div class="form-wrapper">
-        <h1>Create New Epic</h1>
-        <label>
-          <p>Epic Title</p>
-          <input
-            v-model="inputs.createNewEpic.title"
-            type="text"
-            placeholder="Enter title of epic"
-          />
-        </label>
+    <create-new-epic-modal
+      :show="modal.createNewEpic"
+      @close="modal.createNewEpic = false"
+      @submit="createNewEpic"
+    />
 
-        <label>
-          <p>Epic Description</p>
-          <input
-            v-model="inputs.createNewEpic.description"
-            type="text"
-            placeholder="Enter description of epic"
-          />
-        </label>
-
-        <div class="btn-wrapper">
-          <button @click="modal.createNewEpic = false">Cancel</button>
-          <button @click="createNewEpic()">Submit</button>
-        </div>
-      </div>
-    </modal>
-
-    <modal :class="{ closed: !modal.createNewTicket }" width="60vw">
-      <div class="form-wrapper new-ticket-form">
-        <h1>Create New Ticket</h1>
-        <label>
-          <p>Title</p>
-          <input
-            v-model="inputs.createNewTicket.title"
-            type="text"
-            placeholder="Title of the ticket"
-          />
-        </label>
-
-        <label>
-          <p>Description</p>
-          <input
-            v-model="inputs.createNewTicket.description"
-            type="text"
-            placeholder="Description of the ticket"
-          />
-        </label>
-
-        <label class="point-field">
-          <p>Points</p>
-          <input
-            v-model="inputs.createNewTicket.point"
-            type="text"
-          />
-        </label>
-
-        <label class="assign-epic-field">
-          <p>Epic</p>
-          <select-input
-            :options="epicOptions"
-            :title="selectInput.createNewTicket.epicId.title"
-            :value="selectInput.createNewTicket.epicId.value"
-            @input="handleChangeEpicOption"
-          />
-        </label>
-
-        <div class="btn-wrapper">
-          <button @click="modal.createNewTicket = false">Cancel</button>
-          <button @click="createNewTicket()">Submit</button>
-        </div>
-      </div>
-    </modal>
+    <create-new-ticket-model
+      ref="createNewTicketModal"
+      :show="modal.createNewTicket"
+      @close="modal.createNewTicket = false"
+      @submit="createNewTicket"
+    />
   </main>
 </template>
 
@@ -149,12 +88,16 @@
 import Modal from '@/components/Modal';
 import SelectInput from '@/components/SelectInput';
 import Tag from '@/components/Tag';
+import CreateNewEpicModal from '@/pages/Epics/Modal.CreateNewEpic';
+import CreateNewTicketModel from '@/pages/Epics/Modal.CreateNewTicket';
 import CustomTicketList from '@/components/CustomTicketList';
 import add from '@/assets/add.svg';
 
 export default {
   components: {
     Modal,
+    CreateNewEpicModal,
+    CreateNewTicketModel,
     SelectInput,
     Tag,
     CustomTicketList,
@@ -166,32 +109,11 @@ export default {
         createNewEpic: false,
         createNewTicket: false,
       },
-      inputs: {
-        createNewEpic: {
-          title: '',
-          description: '',
-        },
-        createNewTicket: {
-          title: '',
-          description: '',
-          point: '',
-          epicId: -1,
-        },
-      },
-      selectInput: {
-        createNewTicket: {
-          epicId: { title: 'Unassigned', value: -1 },
-        },
-      },
     };
   },
   computed: {
     epicsMap() { return this.$store.getters['epics/data']; },
     epics() { return Array.from(this.epicsMap.values()); },
-    epicOptions() {
-      const options = this.epics.map(({ title, id }) => ({ title, value: id }));
-      return [{ title: 'Unassigned', value: -1 }].concat(options);
-    },
     focusedEpicId() { return this.$store.getters['epics/focused']; },
     focusedEpic() {
       return this.epicsMap.get(this.focusedEpicId) || {
@@ -215,49 +137,17 @@ export default {
     },
   },
   methods: {
-    async createNewEpic() {
-      const { title, description } = this.inputs.createNewEpic;
-      const input = {
-        title: title.trim(),
-        description: description.trim(),
-      };
-
+    async createNewEpic(input) {
       await this.$store.dispatch('epics/create', input);
-      this.inputs.createNewEpic.title = '';
-      this.inputs.createNewEpic.description = '';
       this.modal.createNewEpic = false;
     },
-    async createNewTicket() {
-      const {
-        title,
-        description,
-        point,
-        epicId,
-      } = this.inputs.createNewTicket;
-      const input = {
-        title,
-        description,
-        point,
-        epicId,
-      };
+    async createNewTicket(input) {
       await this.$store.dispatch('epics/tickets/create', input);
-      this.inputs.createNewTicket.title = '';
-      this.inputs.createNewTicket.description = '';
-      this.inputs.createNewTicket.point = '';
       this.modal.createNewTicket = false;
     },
     async focusEpic(id) {
-      const option = this.epicOptions.find(({ value }) => value === id);
-      this.inputs.createNewTicket.epicId = option ? option.value : -1;
-      this.selectInput.createNewTicket.epicId.title = option ? option.title : 'Unassigned';
-      this.selectInput.createNewTicket.epicId.value = option ? option.value : -1;
-
       this.$store.commit('epics/setFocused', id);
-    },
-    handleChangeEpicOption({ title, value }) {
-      this.inputs.createNewTicket.epicId = value;
-      this.selectInput.createNewTicket.epicId.title = title;
-      this.selectInput.createNewTicket.epicId.value = value;
+      this.$refs.createNewTicketModal.changeEpicOption(id);
     },
   },
 };
@@ -381,13 +271,4 @@ main
           background-color: #555
           &:hover
             background-color: #666
-
-div.modal-content
-  > div.form-wrapper
-    &.new-ticket-form
-      > label.point-field
-        width: 20%
-      > label.assign-epic-field
-        margin-left: 10pt
-        width: calc(80% - 10pt)
 </style>
