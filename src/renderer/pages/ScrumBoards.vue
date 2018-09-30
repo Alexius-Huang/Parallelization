@@ -7,10 +7,11 @@
         <li
           v-for="{ title, id, color } in boards"
           :key="`${title}-${id}`"
-          :class="{ active: id === focusBoardId }"
+          :class="{ active: id === focusedBoardId }"
         >
           <button
             :style="{ 'border-left-color': color[0] }"
+            @click="focusBoard(id)"
           >{{ title }}</button>
         </li>
 
@@ -92,7 +93,6 @@ export default {
         lastPage,
         add,
       },
-      focusBoardId: 1,
     };
   },
   computed: {
@@ -101,7 +101,8 @@ export default {
     tickets() { return Array.from(this.ticketsMap.values()); },
     boardsMap() { return this.$store.getters['boards/data']; },
     boards() { return Array.from(this.boardsMap.values()); },
-    board() { return this.boardsMap.get(this.focusBoardId) || { columns: [] }; },
+    focusedBoardId() { return this.$store.getters['boards/focused']; },
+    board() { return this.boardsMap.get(this.focusedBoardId) || { columns: [] }; },
     boardTickets() { return this.tickets.filter(({ boardId }) => boardId === this.board.id); },
     boardTicketsMap() {
       const ticketsMap = new Map();
@@ -129,6 +130,9 @@ export default {
         id: ticketId,
         mutation: ticket => ({ ...ticket, boardState }),
       });
+    },
+    focusBoard(id) {
+      this.$store.commit('boards/setFocused', id);
     },
   },
 };
