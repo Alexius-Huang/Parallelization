@@ -15,10 +15,11 @@
             <p
               class="additional-info"
               v-for="({ title, content }, i) in info"
-              :key="`${i}-${title}`"
+              :key="`${i}-${title || 'none'}`"
             >
               <img :src="icons.info" alt="Info icon" />
-              <span class="text-wrapper">{{ title }} - {{ content }}</span>
+              <span v-if="title" class="text-wrapper" v-html="`${title} - ${content}`" />
+              <span v-else class="text-wrapper" v-html="content" />
             </p>
             <p class="additional-info">
               <img :src="icons.clock" alt="Notification Created At" />
@@ -93,6 +94,8 @@ main
     > ul
       height: calc(100vh - 110pt)
       overflow-y: auto
+      box-sizing: border-box
+      padding-bottom: 100pt
       > li
         box-sizing: border-box
         padding: 0 5pt

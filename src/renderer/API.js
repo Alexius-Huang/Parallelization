@@ -49,10 +49,23 @@ export function fetchMessages({ page, limit = 10 }) {
     .then(response => response.json());
 }
 
+export function lastMessage() {
+  return fetch(`${URL}/messages?_sort=createdAt&_order=desc&_limit=1`)
+    .then(response => response.json());
+}
+
 export function createMessage(data) {
   return fetch(`${URL}/messages`, {
     body: JSON.stringify(data),
     headers: { 'content-type': 'application/json' },
     method: 'POST',
+  }).then(response => response.json());
+}
+
+export function updateMessage(id, data, method = 'PATCH') {
+  return fetch(`${URL}/messages/${id}`, {
+    body: JSON.stringify(data),
+    headers: { 'content-type': 'application/json' },
+    method,
   }).then(response => response.json());
 }

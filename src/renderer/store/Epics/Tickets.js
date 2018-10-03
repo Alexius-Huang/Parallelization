@@ -109,12 +109,31 @@ export default {
         mutation: ticket => ({ ...ticket, boardState: ticket.boardState - 1 }),
       });
     },
-    async assignToBoard({ dispatch }, payload) {
+    async assignToBoard({ dispatch, rootGetters, getters }, payload) {
       const { id, boardId } = payload;
       await dispatch('update', {
         id,
         mutation: ticket => ({ ...ticket, boardState: 0, boardId }),
       });
+
+      const tickets = getters.data;
+      const ticket = tickets.get(id);
+
+      if (boardId === -1) {
+        const createMessagePayload = {
+          type: MessageTypes.DROP_TICKET_FROM_BOARD,
+          meta: { ticketName: ticket.title },
+        };
+        await dispatch('messages/create', createMessagePayload, { root: true });
+      } else {
+        const boards = rootGetters['boards/data'];
+        const board = boards.get(boardId);
+        const createMessagePayload = {
+          type: MessageTypes.ASSIGN_TICKET_TO_BOARD,
+          meta: { ticketName: ticket.title, boardName: board.title },
+        };
+        await dispatch('messages/create', createMessagePayload, { root: true });
+      }
     },
   },
 };
