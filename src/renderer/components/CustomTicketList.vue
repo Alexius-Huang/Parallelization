@@ -6,7 +6,16 @@
     @mouseleave="handleListMouseLeave($event)"
   >
     <li
-      v-for="{ id, description, epicId, title, point, boardId, boardState } in $props.tickets"
+      v-for="{
+        id,
+        description,
+        epicId,
+        title,
+        point,
+        boardId,
+        boardState,
+        createdAt,
+      } in $props.tickets"
       :key="id"
       @mousedown="handleTicketMouseDown({ event: $event, id })"
     >
@@ -47,6 +56,7 @@
       <div class="detail" :class="{ active: triggeredIds.includes(id) }">
         <h2>{{ title }}</h2>
         <p>{{ description }}</p>
+        <p>Created {{ timestampStringify(createdAt) }}</p>
       </div>
     </li>
 
@@ -59,6 +69,7 @@
 <script>
 import Tag from '@/components/Tag';
 import chevronLeft from '@/assets/chevron-left.svg';
+import { timestampStringify } from '@/helpers/time';
 
 export default {
   components: { Tag },
@@ -74,6 +85,7 @@ export default {
     boardsMap() { return this.$store.getters['boards/data']; },
   },
   methods: {
+    timestampStringify,
     truncate(string, length) {
       if (string.length > length) {
         return `${string.substring(0, length)}...`;

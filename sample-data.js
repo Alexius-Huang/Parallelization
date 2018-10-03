@@ -243,6 +243,18 @@ const randomBoardId = () => boardIds[Math.floor(Math.random() * boardIds.length)
 const boardState = [0, 1, 2];
 const randomBoardState = () => boardState[Math.floor(Math.random() * boardState.length)];
 
+const now = Date.now();
+const anHour = 60 * 60 * 1000;
+const aDay = 24 * anHour;
+const aWeek = 7 * aDay;
+const aMonth = 30 * aDay;
+const anHourAgo = now - anHour;
+const aDayAgo = now - aDay;
+const aWeekAgo = now - aWeek;
+const aMonthAgo = now - aMonth;
+const times = [anHourAgo, aDayAgo, aWeekAgo, aMonthAgo];
+const randomTime = () => times[Math.floor(Math.random() * times.length)];
+
 module.exports = () => {
   const data = {
     epics: [],
@@ -278,6 +290,7 @@ module.exports = () => {
         point: 1,
         title: 'Sample Ticket',
         description: 'Description of sample ticket',
+        createdAt: randomTime(),
       });
     }
   }

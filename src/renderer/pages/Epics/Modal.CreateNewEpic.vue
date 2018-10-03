@@ -20,6 +20,11 @@
         />
       </label>
 
+      <label>
+        <p>Epic Color</p>
+        <color-input />
+      </label>
+
       <div class="btn-wrapper">
         <button @click="$emit('close')">Cancel</button>
         <button @click="createNewEpic()">Submit</button>
@@ -30,9 +35,10 @@
 
 <script>
 import Modal from '@/components/Modal';
+import ColorInput from '@/components/ColorInput';
 
 export default {
-  components: { Modal },
+  components: { Modal, ColorInput },
   props: ['show'],
   data() {
     return {

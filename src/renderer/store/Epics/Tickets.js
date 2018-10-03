@@ -1,10 +1,6 @@
 /* eslint-disable import/no-dynamic-require, no-console */
-// import fs from 'fs';
-// import util from 'util';
-// import { Map } from 'immutable';
 import { injectGetters, injectMutations } from '../helper';
 import * as API from '../../API';
-// const readFile = util.promisify(fs.readFile);
 import { MessageTypes } from '../../resources/message-types';
 
 const defaultState = { data: new Map() };
