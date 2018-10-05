@@ -77,3 +77,16 @@ export function updateMessage(id, data, method = 'PATCH') {
     method,
   }).then(response => response.json());
 }
+
+export function fetchStatistics() {
+  return fetch(`${URL}/statistics`)
+    .then(response => response.json());
+}
+
+export function updateStatistics(data, method = 'PUT') {
+  return fetch(`${URL}/statistics`, {
+    body: JSON.stringify(data),
+    headers: { 'content-type': 'application/json' },
+    method,
+  }).then(response => response.json());
+}

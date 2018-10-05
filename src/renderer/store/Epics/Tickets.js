@@ -53,6 +53,8 @@ export default {
         boardState: -1,
       });
 
+      await dispatch('statistics/totalTicketsIncrement', undefined, { root: true });
+
       const createMessagePayload = {
         type: MessageTypes.CREATE_TICKET,
         meta: { title, epicId, point: sanitizedPoint },

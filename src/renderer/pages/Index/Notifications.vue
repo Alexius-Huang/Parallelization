@@ -92,8 +92,9 @@ export default {
 
 section
   margin-top: -50pt
+  margin-left: 20pt
   height: 100vh
-  width: calc(50% - 10pt)
+  width: calc(40% - 10pt)
   padding: 50pt 15pt 0 15pt
   box-sizing: border-box
   background-color: #444

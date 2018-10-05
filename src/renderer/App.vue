@@ -22,6 +22,7 @@ export default {
         dispatch('boards/fetch'),
         dispatch('epics/tickets/fetchAll'),
         dispatch('messages/setLatestMessage'),
+        dispatch('statistics/fetch'),
       ]);
     },
     async mapRouteToDispatch(to = {}) { // , from = {}) {

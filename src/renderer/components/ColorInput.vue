@@ -64,6 +64,7 @@ div.color-input
   > div.input-wrapper
     user-select: none
     height: 30pt
+    font-family: 'Roboto Mono', monospace
     @include vertical-align
     position: relative
     > div.selected-color
@@ -82,22 +83,27 @@ div.color-input
 
     > div.color-palette
       position: absolute
-      padding: 10pt
+      padding: 5pt
       bottom: 0
       left: 100%
       display: none
       background-color: #222
-      width: 190pt
+      width: 285px
+      font-size: 0
       border-radius: 5pt
       &.focused
         display: block
       > div.color-row
-        width: 10pt
+        font-size: 0
+        width: 15px
+        border: none
         display: inline-block
         > div.color-col
+          border: none
+          font-size: 0
           display: inline-block
-          width: 10pt
-          height: 10pt
+          width: 15px
+          height: 15px
           opacity: 0.8
           &:hover
             opacity: 1

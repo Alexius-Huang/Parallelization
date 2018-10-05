@@ -1,7 +1,7 @@
 <template>
   <main>
-    <notifications class="notifications" />
     <statistics class="statistics" />
+    <notifications class="notifications" />
   </main>
 </template>
 

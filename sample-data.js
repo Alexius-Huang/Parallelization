@@ -261,6 +261,13 @@ module.exports = () => {
     tickets: [],
     boards: [],
     messages: [],
+    statistics: {
+      total: {
+        tickets: 0,
+        epics: 0,
+        boards: 0,
+      },
+    },
   };
 
   for (let i = 1; i <= 3; i += 1) {
@@ -272,6 +279,7 @@ module.exports = () => {
       color: randomColor(),
       createdAt: aMonthAgo,
     });
+    data.statistics.total.boards += 1;
   }
 
   for (let i = 1; i <= 5; i += 1) {
@@ -282,6 +290,7 @@ module.exports = () => {
       color: randomColor(),
       createdAt: aMonthAgo,
     });
+    data.statistics.total.epics += 1;
 
     for (let j = 1; j <= 5; j += 1) {
       const boardId = randomBoardId();
@@ -295,6 +304,7 @@ module.exports = () => {
         description: 'Description of sample ticket',
         createdAt: randomTime(),
       });
+      data.statistics.total.tickets += 1;
     }
   }
 
