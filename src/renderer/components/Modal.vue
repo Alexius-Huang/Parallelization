@@ -21,6 +21,7 @@ div.modal-bg
   left: 0
   top: 0
   opacity: 1
+  z-index: 100
   transition: .25s
   &.closed
     opacity: 0

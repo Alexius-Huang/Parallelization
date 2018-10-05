@@ -18,10 +18,17 @@
         <li>
           <button
             :style="{ 'border-left': 'none' }"
+            @click="modal.createNewBoard = true"
           ><img :src="icons.add" alt="Create Scrum Board" /></button>
         </li>
       </ul>
     </section>
+
+    <create-new-board-modal
+      :show="modal.createNewBoard"
+      @close="modal.createNewBoard = false"
+      @submit="createNewBoard"
+    />
 
     <section class="scrum-boards">
       <ul>
@@ -77,6 +84,7 @@
 </template>
 
 <script>
+import CreateNewBoardModal from '@/pages/ScrumBoards/Modal.CreateNewBoard';
 import chevronLeft from '@/assets/chevron-left.svg';
 import chevronRight from '@/assets/chevron-right.svg';
 import firstPage from '@/assets/first-page.svg';
@@ -84,6 +92,9 @@ import lastPage from '@/assets/last-page.svg';
 import add from '@/assets/add.svg';
 
 export default {
+  components: {
+    CreateNewBoardModal,
+  },
   data() {
     return {
       icons: {
@@ -93,6 +104,7 @@ export default {
         lastPage,
         add,
       },
+      modal: { createNewBoard: false },
     };
   },
   computed: {
@@ -112,6 +124,10 @@ export default {
     },
   },
   methods: {
+    async createNewBoard(input) {
+      await this.$store.dispatch('boards/create', input);
+      this.modal.createNewBoard = false;
+    },
     nextState(ticketId) {
       this.$store.dispatch('epics/tickets/nextState', { id: ticketId });
     },
@@ -193,6 +209,8 @@ main
       text-align: center
       padding: 20pt 50pt
       box-shadow: inset 0pt 15pt 8pt -10pt #222
+      &::-webkit-scrollbar
+        display: none
       > li
         width: 200pt
         display: inline-block

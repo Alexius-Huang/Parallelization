@@ -104,6 +104,15 @@ export default {
           type: 'tag',
           color,
         });
+      } else if (type === MessageTypes.CREATE_BOARD) {
+        const { title, color } = meta;
+        message = 'New Scrum Board Created';
+        info.push({
+          title: 'Scrum Board Name',
+          content: title,
+          type: 'tag',
+          color,
+        });
       } else if (type === MessageTypes.ASSIGN_TICKET_TO_BOARD) {
         const { ticketName, boardName } = meta;
         message = 'Ticket Assigned To Scrum Board';

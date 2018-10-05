@@ -44,6 +44,14 @@ export function fetchBoards() {
     .then(response => response.json());
 }
 
+export function createBoard(data) {
+  return fetch(`${URL}/boards`, {
+    body: JSON.stringify({ ...data, createdAt: Date.now() }),
+    headers: { 'content-type': 'application/json' },
+    method: 'POST',
+  }).then(response => response.json());
+}
+
 export function fetchMessages({ page, limit = 10 }) {
   return fetch(`${URL}/messages?_page=${page}&_limit=${limit}&_sort=createdAt&_order=desc`)
     .then(response => response.json());

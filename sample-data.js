@@ -263,17 +263,18 @@ module.exports = () => {
     messages: [],
   };
 
-  for (let i = 1; i <= 3; i++) {
+  for (let i = 1; i <= 3; i += 1) {
     data.boards.push({
       id: i,
       title: `Board - ${i}`,
       columns: ['TODO', 'On Progress', 'Completed'],
+      description: 'Lorem Ipsum',
       color: randomColor(),
       createdAt: aMonthAgo,
     });
   }
 
-  for (let i = 1; i <= 5; i++) {
+  for (let i = 1; i <= 5; i += 1) {
     data.epics.push({
       id: i,
       title: `Epic - ${i}`,
@@ -282,7 +283,7 @@ module.exports = () => {
       createdAt: aMonthAgo,
     });
 
-    for (let j = 1; j <= 5; j++) {
+    for (let j = 1; j <= 5; j += 1) {
       const boardId = randomBoardId();
       data.tickets.push({
         epicId: i,
