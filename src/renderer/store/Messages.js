@@ -1,4 +1,5 @@
 /* eslint-disable no-console */
+import N from 'node-notifier';
 import { injectGetters, injectMutations } from './helper';
 import { MessageTypes, MessageMergable } from '../resources/message-types';
 import * as API from '../API';
@@ -9,6 +10,11 @@ const defaultState = {
   hasNextPage: true,
   latestMessage: null,
 };
+
+N.notify({
+  title: 'Welcome to Parallelization',
+  message: 'Have a nice day',
+});
 
 export default {
   namespaced: true,
@@ -66,6 +72,11 @@ export default {
           type: 'tag',
           color: ['#eeeeee', 'rgba(0, 0, 0, 0.84)'],
         });
+        N.notify({
+          title: message,
+          message: `${title} has created.`,
+        });
+
         if (point !== 0) {
           info.push({
             title: 'Assigned Point',
