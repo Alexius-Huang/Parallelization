@@ -22,7 +22,7 @@
 
       <label>
         <p>Epic Color</p>
-        <color-input />
+        <color-input ref="colorInput" />
       </label>
 
       <div class="btn-wrapper">
@@ -51,9 +51,11 @@ export default {
   methods: {
     createNewEpic() {
       const { title, description } = this.inputs;
+      const { colorInput } = this.$refs;
       const input = {
         title: title.trim(),
         description: description.trim(),
+        color: colorInput.selected,
       };
 
       this.inputs.title = '';

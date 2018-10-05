@@ -43,10 +43,11 @@ export default {
         return;
       }
 
+      const sanitizedPoint = Math.round(Number.parseFloat(point, 10) * 10) / 10 || 0;
       const data = await API.createTicket({
         title,
         description,
-        point: Math.round(Number.parseFloat(point, 10) * 10) / 10 || 0,
+        point: sanitizedPoint,
         epicId: epicId || -1,
         boardId: -1,
         boardState: -1,
@@ -54,7 +55,7 @@ export default {
 
       const createMessagePayload = {
         type: MessageTypes.CREATE_TICKET,
-        meta: { title, epicId, point },
+        meta: { title, epicId, point: sanitizedPoint },
       };
       await dispatch('messages/create', createMessagePayload, { root: true });
 
@@ -82,6 +83,7 @@ export default {
           title,
           point,
           description,
+          createdAt: ticket.createdAt,
         };
         const newTicket = await API.updateTicket(id, parameterSanitized);
         const newTicketsMap = new Map(ticketsMap);

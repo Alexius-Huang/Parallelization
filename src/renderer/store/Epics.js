@@ -3,7 +3,6 @@ import { injectGetters, injectMutations } from './helper';
 import Tickets from './Epics/Tickets';
 import { MessageTypes } from '../resources/message-types';
 import * as API from '../API';
-import { randomColor } from '../resources/colors';
 
 const defaultState = { data: new Map(), focused: -1 };
 
@@ -20,7 +19,7 @@ export default {
       commit('setData', result);
     },
     async create({ getters, commit, dispatch }, payload = {}) {
-      const { title, description } = payload;
+      const { title, description, color } = payload;
 
       if (
         title === undefined ||
@@ -33,12 +32,12 @@ export default {
       const data = await API.createEpic({
         title,
         description,
-        color: randomColor(),
+        color,
       });
 
       const createMessagePayload = {
         type: MessageTypes.CREATE_EPIC,
-        meta: { title },
+        meta: { title, color },
       };
       await dispatch('messages/create', createMessagePayload, { root: true });
 

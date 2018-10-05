@@ -8,7 +8,7 @@ export function fetchEpics() {
 
 export function createEpic(data) {
   return fetch(`${URL}/epics`, {
-    body: JSON.stringify(data),
+    body: JSON.stringify({ ...data, createdAt: Date.now() }),
     headers: { 'content-type': 'application/json' },
     method: 'POST',
   }).then(response => response.json());
@@ -25,7 +25,7 @@ export function fetchTickets(epicId = null) {
 
 export function createTicket(data) {
   return fetch(`${URL}/tickets`, {
-    body: JSON.stringify(data),
+    body: JSON.stringify({ ...data, createdAt: Date.now() }),
     headers: { 'content-type': 'application/json' },
     method: 'POST',
   }).then(response => response.json());

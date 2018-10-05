@@ -269,6 +269,7 @@ module.exports = () => {
       title: `Board - ${i}`,
       columns: ['TODO', 'On Progress', 'Completed'],
       color: randomColor(),
+      createdAt: aMonthAgo,
     });
   }
 
@@ -278,6 +279,7 @@ module.exports = () => {
       title: `Epic - ${i}`,
       description: `This is Epic - ${i}`,
       color: randomColor(),
+      createdAt: aMonthAgo,
     });
 
     for (let j = 1; j <= 5; j++) {

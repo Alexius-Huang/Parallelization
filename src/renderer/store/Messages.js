@@ -60,28 +60,49 @@ export default {
       if (type === MessageTypes.CREATE_TICKET) {
         const { title, epicId, point } = meta;
         message = 'New Ticket Created';
-        info.push({ title: 'Ticket Name', content: title });
+        info.push({
+          title: 'Ticket Name',
+          content: title,
+          type: 'tag',
+          color: ['#eeeeee', 'rgba(0, 0, 0, 0.84)'],
+        });
+        if (point !== 0) {
+          info.push({
+            title: 'Assigned Point',
+            content: point,
+            type: 'tag',
+            color: ['#eeeeee', 'rgba(0, 0, 0, 0.84)'],
+          });
+        }
         if (epicId !== -1) {
           const epicsMap = rootGetters['epics/data'];
-          info.push({ title: 'Assigned Epic', content: epicsMap.get(epicId).title });
-        }
-        if (point !== 0) {
-          info.push({ title: 'Assigned Point', content: point });
+          const epic = epicsMap.get(epicId);
+          info.push({
+            title: 'Assigned Epic',
+            content: epic.title,
+            type: 'tag',
+            color: epic.color,
+          });
         }
       } else if (type === MessageTypes.CREATE_EPIC) {
-        const { title } = meta;
+        const { title, color } = meta;
         message = 'New Epic Created';
-        info.push({ title: 'Epic Name', content: title });
+        info.push({
+          title: 'Epic Name',
+          content: title,
+          type: 'tag',
+          color,
+        });
       } else if (type === MessageTypes.ASSIGN_TICKET_TO_BOARD) {
         const { ticketName, boardName } = meta;
         message = 'Ticket Assigned To Scrum Board';
         const content = `<strong>${ticketName}</strong> has assigned to <strong>${boardName}</strong>`;
-        info.push({ content });
+        info.push({ content, type: 'info' });
       } else if (type === MessageTypes.DROP_TICKET_FROM_BOARD) {
         const { ticketName } = meta;
         message = 'Ticket Dropped from Scrum Board';
         const content = `<strong>${ticketName}</strong> has dropped from scrum board`;
-        info.push({ content });
+        info.push({ content, type: 'info' });
       } else {
         console.error('[Error] Unknown message type.');
       }

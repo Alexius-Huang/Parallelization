@@ -14,16 +14,40 @@
             <p>{{ message }}</p>
             <p
               class="additional-info"
-              v-for="({ title, content }, i) in info"
+              v-for="({ title, content, type, color }, i) in info"
               :key="`${i}-${title || 'none'}`"
             >
-              <img :src="icons.info" alt="Info icon" />
-              <span v-if="title" class="text-wrapper" v-html="`${title} - ${content}`" />
-              <span v-else class="text-wrapper" v-html="content" />
+              <span v-if="type === 'info'" class="info-wrapper">
+                <img :src="icons.info" alt="Info icon" />
+                <span v-if="title" class="text-wrapper" v-html="`${title} - ${content}`" />
+                <span v-else class="text-wrapper" v-html="content" />
+              </span>
+
+              <span v-else-if="type === 'tag'" class="info-wrapper">
+                <tag
+                  v-if="title"
+                  :title="title"
+                  :sub-title="content"
+                  :style="{
+                    'background-color': color[0],
+                    'color': color[1],
+                  }"        
+                />
+                <tag
+                  v-else
+                  :title="content"
+                  :style="{
+                    'background-color': color[0],
+                    'color': color[1],
+                  }"        
+                />
+              </span>
             </p>
             <p class="additional-info">
-              <img :src="icons.clock" alt="Notification Created At" />
-              <span class="text-wrapper">{{ timestampStringify(createdAt) }}</span>
+              <span class="info-wrapper">
+                <img :src="icons.clock" alt="Notification Created At" />
+                <span class="text-wrapper">{{ timestampStringify(createdAt) }}</span>
+              </span>
             </p>
           </div>
         </li>
@@ -37,6 +61,7 @@
 </template>
 
 <script>
+import Tag from '@/components/Tag';
 import { MessageIcons } from '@/resources/message-types';
 import clock from '@/assets/clock.svg';
 import info from '@/assets/info.svg';
@@ -44,6 +69,7 @@ import feedback from '@/assets/feedback.svg';
 import { timestampStringify } from '@/helpers/time';
 
 export default {
+  components: { Tag },
   data() {
     return {
       MessageIcons,
@@ -144,17 +170,23 @@ main
           > p
             font-size: 12pt
             line-height: 1.5
+            &:first-child
+              margin-bottom: 5pt
           > p.additional-info
             height: 20pt
-            @include vertical-align
-            > span.text-wrapper
-              font-size: 9pt
-              color: rgba(255, 255, 255, 0.54)
+            + p.additional-info
+              margin-top: 1pt
+            > span.info-wrapper
+              display: inline-block
+              height: 20pt
+              @include vertical-align
+              > span.text-wrapper
+                font-size: 9pt
+                color: rgba(255, 255, 255, 0.54)
 
-            > img
-              width: 12pt
-              height: 12pt
-              opacity: 0.4
-              margin-right: 3pt
-
+              > img
+                width: 12pt
+                height: 12pt
+                opacity: 0.4
+                margin-right: 3pt
 </style>
