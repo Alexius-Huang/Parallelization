@@ -24,16 +24,25 @@
         </p>
       </li>
     </ul>
+
+    <div class="donut-charts">
+      <donut-chart
+        class="donut-chart"
+        :data="ticketsVersusEpics"
+      />
+    </div>
   </section>
 </template>
 
 <script>
+import DonutChart from '@/components/DonutChart';
 import barChart from '@/assets/bar-chart.svg';
 import listIcon from '@/assets/list.svg';
 import flag from '@/assets/flag.svg';
 import viewColumns from '@/assets/view-columns.svg';
 
 export default {
+  components: { DonutChart },
   data() {
     return {
       icons: {
@@ -47,6 +56,30 @@ export default {
   computed: {
     statistics() { return this.$store.getters['statistics/data']; },
     total() { return this.statistics.total; },
+    ticketsMap() { return this.$store.getters['epics/tickets/data']; },
+    epicsMap() { return this.$store.getters['epics/data']; },
+    ticketsVersusEpics() {
+      const { ticketsMap, epicsMap, total } = this;
+      const tickets = Array.from(ticketsMap.values());
+      const epicTicketCount = tickets.reduce((acc, { epicId }) => {
+        if (acc.has(epicId)) {
+          acc.set(epicId, acc.get(epicId) + 1);
+        } else {
+          acc.set(epicId, 1);
+        }
+        return acc;
+      }, new Map());
+
+      return Array.from(epicTicketCount.keys()).map((epicId) => {
+        const epic = epicsMap.get(epicId);
+        const ticketsCount = epicTicketCount.get(epicId);
+        return {
+          percentage: (ticketsCount / total.tickets) * 100,
+          color: epic ? epic.color[0] : '#666',
+          title: epic ? epic.title : 'Unassigned',
+        };
+      });
+    },
   },
 };
 </script>
@@ -107,4 +140,10 @@ section
           opacity: 0.05
           left: 5pt
           bottom: -10pt
+
+  > div.donut-charts
+    margin-top: 12pt
+    > .donut-chart
+      max-width: 300pt
+      margin: 0 auto
 </style>

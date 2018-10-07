@@ -56,6 +56,7 @@
     }
   },
   "dependencies": {
+    "@tweenjs/tween.js": "^17.2.0",
     "immutable": "^3.8.2",
     "node-notifier": "^5.2.1",
     "vue": "^2.5.16",
